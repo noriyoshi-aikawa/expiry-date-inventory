@@ -1447,17 +1447,63 @@ tbody tr:hover td { background: #fafafa; }
         <span style="font-weight:600; font-size:13px;">注文商品</span>
         <a style="color:#5b5fc7; font-size:12px; text-decoration:none;">✏️ 内容を変更する</a>
       </div>
-      <!-- 商品行 -->
+
+      <!-- 商品1: 生クリーム -->
       <div style="display:flex; gap:12px; padding:12px; align-items:flex-start; border-bottom:1px solid #f3f4f6;">
         <div style="width:56px; height:56px; background:#f3f4f6; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#9ca3af; font-size:10px; text-align:center; border-radius:3px; line-height:1.4;">No<br>Image</div>
         <div style="flex:1; line-height:1.7;">
-          <div style="color:#5b5fc7; font-weight:600; font-size:13px;">生クリーム（素材：優しさ）</div>
+          <div style="color:#5b5fc7; font-weight:600; font-size:13px;">生クリーム　一覧⇒カゴ⇒決済 ↗（素材：優しさ）</div>
           <div style="color:#6b7280; font-size:12px;">独自商品コード：sc-00023</div>
-          <div style="font-size:12px; color:#374151;">販売価格：2,000円（税込）　税率：8%　割引：0%　数量：1</div>
+          <div style="color:#6b7280; font-size:12px;">&lt;冷凍便&gt;</div>
+          <div style="font-size:12px; color:#374151;">販売価格：2,000円（税込）　税率：8%　割引：0%　数量：3</div>
         </div>
       </div>
 
-      <!-- ★ NEW: 引き当てロット情報（注文内容） -->
+      <!-- ★ NEW: 引き当てロット情報（生クリーム・2ロット） -->
+      <div style="margin:12px; border:2px solid #5b5fc7; border-radius:7px; overflow:hidden;">
+        <div style="background:#ede9fe; padding:9px 14px; border-bottom:1px solid #c4b5fd; display:flex; align-items:center; gap:8px;">
+          <span style="font-size:13px; font-weight:700; color:#4c1d95;">🔢 引き当てロット情報</span>
+          <span class="badge-new">NEW</span>
+          <span style="font-size:11px; color:#7c3aed; margin-left:auto;">注文確定時にFEFOで自動引き当て</span>
+        </div>
+        <table style="width:100%; border-collapse:collapse; background:white;">
+          <thead>
+            <tr style="background:#f5f3ff;">
+              <th style="padding:8px 14px; text-align:left; font-size:12px; font-weight:600; color:#6b7280; border-bottom:1px solid #e5e7eb;">ロットNo.</th>
+              <th style="padding:8px 14px; text-align:left; font-size:12px; font-weight:600; color:#6b7280; border-bottom:1px solid #e5e7eb;">賞味期限</th>
+              <th style="padding:8px 14px; text-align:left; font-size:12px; font-weight:600; color:#6b7280; border-bottom:1px solid #e5e7eb;">注文時残日数</th>
+              <th style="padding:8px 14px; text-align:left; font-size:12px; font-weight:600; color:#6b7280; border-bottom:1px solid #e5e7eb;">引き当て数量</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f3f4f6;">
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">LOT-2025-001</td>
+              <td style="padding:9px 14px; font-size:13px; color:#374151;">2026-01-22</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#f97316;">21日</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">2個</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">LOT-2025-002</td>
+              <td style="padding:9px 14px; font-size:13px; color:#374151;">2026-03-31</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#16a34a;">90日</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">1個</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 商品2: ホイップクリーム -->
+      <div style="display:flex; gap:12px; padding:12px; align-items:flex-start; border-bottom:1px solid #f3f4f6; border-top:2px solid #e5e7eb;">
+        <div style="width:56px; height:56px; background:#f3f4f6; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#9ca3af; font-size:10px; text-align:center; border-radius:3px; line-height:1.4;">No<br>Image</div>
+        <div style="flex:1; line-height:1.7;">
+          <div style="color:#5b5fc7; font-weight:600; font-size:13px;">ホイップクリーム　一覧⇒カゴ⇒決済 ↗（素材：優しさ）</div>
+          <div style="color:#6b7280; font-size:12px;">独自商品コード：sc-00024</div>
+          <div style="color:#6b7280; font-size:12px;">&lt;冷凍便&gt;</div>
+          <div style="font-size:12px; color:#374151;">販売価格：1,500円（税込）　税率：8%　割引：0%　数量：2</div>
+        </div>
+      </div>
+
+      <!-- ★ NEW: 引き当てロット情報（ホイップクリーム・1ロット） -->
       <div style="margin:12px; border:2px solid #5b5fc7; border-radius:7px; overflow:hidden;">
         <div style="background:#ede9fe; padding:9px 14px; border-bottom:1px solid #c4b5fd; display:flex; align-items:center; gap:8px;">
           <span style="font-size:13px; font-weight:700; color:#4c1d95;">🔢 引き当てロット情報</span>
@@ -1475,17 +1521,15 @@ tbody tr:hover td { background: #fafafa; }
           </thead>
           <tbody>
             <tr>
-              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">LOT-2025-001</td>
-              <td style="padding:9px 14px; font-size:13px; color:#374151;">2026-03-31</td>
-              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#16a34a;">306日</td>
-              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">1個</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">LOT-2025-005</td>
+              <td style="padding:9px 14px; font-size:13px; color:#374151;">2026-05-31</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#16a34a;">367日</td>
+              <td style="padding:9px 14px; font-size:13px; font-weight:600; color:#374151;">2個</td>
             </tr>
           </tbody>
         </table>
-        <div style="padding:6px 14px 8px; font-size:11px; color:#7c3aed; background:#faf5ff;">
-          ※ 複数ロットにまたがって引き当てた場合は行が追加されます
-        </div>
       </div>
+
     </div>
 
     <!-- 備考 -->
