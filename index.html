@@ -3,588 +3,1672 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>賞味期限・ロット在庫管理機能 企画書</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+<title>ロット・賞味期限管理 UI モック — makeshop</title>
 <style>
-  :root {
-    --color-primary:       #2389CA;
-    --color-secondary:     #1568A6;
-    --color-tertiary:      #084D84;
-    --color-white:         #FFFFFF;
-    --color-black:         #1A1A1C;
-    --color-warning:       #F05A25;
-    --color-attention:     #FEFFB8;
-    --color-btn-free:      #F05A25;
-    --color-btn-usually:   #1A1A1C;
-    --color-text-primary:  #1A1A1C;
-    --color-text-secondary:#C1C0C6;
-    --color-text-link:     #2389CA;
-    --color-border:        #D5D5D9;
-    --color-table-alt:     #F5F5F5;
-    --color-heading-bg:    #E9F3FA;
-    --color-blue-10:       #E9F3FA;
-    --color-blue-5:        #F4F9FC;
-    --color-grey-5:        #F4F4F4;
-    --font-ja: 'Noto Sans JP', 'メイリオ', sans-serif;
-    --font-en: 'Outfit', sans-serif;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: var(--font-ja);
-    background: #EFEFEF;
-    color: var(--color-text-primary);
-    line-height: 1.75;
-    letter-spacing: 0.04em;
-  }
-  .slide {
-    width: 960px;
-    min-height: 540px;
-    margin: 40px auto;
-    background: var(--color-white);
-    padding: 56px 64px;
-    position: relative;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  }
-  /* 表紙 */
-  .slide.cover {
-    background: var(--color-primary);
-    color: var(--color-white);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 540px;
-  }
-  .cover .eyebrow {
-    font-family: var(--font-en);
-    font-size: 14px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    opacity: 0.75;
-    margin-bottom: 20px;
-  }
-  .cover h1 {
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    margin-bottom: 12px;
-  }
-  .cover .subtitle {
-    font-size: 18px;
-    opacity: 0.85;
-    margin-bottom: 8px;
-  }
-  .cover .date {
-    font-family: var(--font-en);
-    font-size: 15px;
-    opacity: 0.7;
-    margin-top: 32px;
-  }
-  .cover .badge {
-    display: inline-block;
-    margin-top: 24px;
-    background: var(--color-warning);
-    color: var(--color-white);
-    font-size: 14px;
-    font-weight: 700;
-    padding: 6px 18px;
-    border-radius: 2px;
-    letter-spacing: 0.06em;
-  }
-  /* まとめ */
-  .slide.summary {
-    background: var(--color-tertiary);
-    color: var(--color-white);
-  }
-  .summary h2 { color: var(--color-white); }
-  /* 見出し */
-  .slide h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--color-primary);
-    line-height: 1.5;
-    margin-bottom: 28px;
-    padding-bottom: 12px;
-    border-bottom: 3px solid var(--color-primary);
-  }
-  .slide h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--color-black);
-    margin-bottom: 12px;
-    margin-top: 24px;
-  }
-  .slide h3:first-of-type { margin-top: 0; }
-  /* 箇条書き */
-  ul.bullets { padding-left: 0; list-style: none; }
-  ul.bullets li {
-    font-size: 17px;
-    line-height: 1.75;
-    padding: 10px 0 10px 28px;
-    border-bottom: 1px solid var(--color-border);
-    position: relative;
-  }
-  ul.bullets li:last-child { border-bottom: none; }
-  ul.bullets li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 20px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--color-primary);
-  }
-  ul.bullets li strong { color: var(--color-primary); }
-  /* カードグリッド */
-  .card-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  .card {
-    background: var(--color-blue-10);
-    padding: 24px;
-    border-top: 4px solid var(--color-primary);
-  }
-  .card h3 {
-    color: var(--color-primary);
-    font-size: 16px;
-    margin-top: 0;
-    margin-bottom: 10px;
-  }
-  .card p {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--color-text-primary);
-  }
-  .card .purpose {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--color-border);
-    color: var(--color-warning);
-    font-weight: 500;
-    font-size: 15px;
-  }
-  /* 2カラム */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-  }
-  .col-item {
-    background: var(--color-blue-5);
-    padding: 14px 18px;
-    border-left: 4px solid var(--color-primary);
-    margin-bottom: 12px;
-  }
-  .col-item .label {
-    display: block;
-    color: var(--color-primary);
-    font-weight: 700;
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-  .col-item .value {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--color-text-primary);
-  }
-  /* スコアテーブル */
-  table.score {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-  }
-  table.score th {
-    background: var(--color-primary);
-    color: var(--color-white);
-    padding: 12px 14px;
-    text-align: left;
-    font-weight: 700;
-  }
-  table.score td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--color-border);
-    vertical-align: top;
-  }
-  table.score tr:nth-child(even) td { background: var(--color-table-alt); }
-  table.score tr.total td {
-    background: var(--color-primary);
-    color: var(--color-white);
-    font-weight: 700;
-  }
-  /* ページ番号 */
-  .page-num {
-    position: absolute;
-    bottom: 28px;
-    right: 40px;
-    font-family: var(--font-en);
-    font-size: 13px;
-    color: var(--color-text-secondary);
-  }
-  .cover .page-num, .summary .page-num {
-    color: var(--color-white);
-    opacity: 0.6;
-  }
-  /* まとめスライド用 */
-  .summary-block {
-    margin-bottom: 28px;
-  }
-  .summary-block .head {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--color-attention);
-    margin-bottom: 10px;
-    letter-spacing: 0.04em;
-  }
-  .summary-block p, .summary-block li {
-    font-size: 16px;
-    line-height: 1.8;
-  }
-  .summary-block ul { padding-left: 20px; }
-  .summary-block li { margin-bottom: 6px; }
-  /* ロードマップ */
-  .roadmap {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-top: 8px;
-  }
-  .roadmap-col {
-    border-top: 4px solid var(--color-primary);
-    padding: 16px;
-    background: var(--color-blue-5);
-  }
-  .roadmap-col.phase2 { border-color: var(--color-secondary); }
-  .roadmap-col.phase3 { border-color: var(--color-tertiary); }
-  .roadmap-col .phase-label {
-    font-family: var(--font-en);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--color-primary);
-    margin-bottom: 6px;
-  }
-  .roadmap-col.phase2 .phase-label { color: var(--color-secondary); }
-  .roadmap-col.phase3 .phase-label { color: var(--color-tertiary); }
-  .roadmap-col .phase-title {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: var(--color-black);
-  }
-  .roadmap-col ul {
-    padding-left: 16px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--color-text-primary);
-  }
-  /* 印刷 */
-  @media print {
-    body { background: var(--color-white); }
-    .slide {
-      min-height: 100vh;
-      page-break-after: always;
-      box-shadow: none;
-      margin: 0;
-      width: 100%;
-    }
-    .slide:last-child { page-break-after: auto; }
-  }
-  /* スマホ */
-  @media (max-width: 768px) {
-    .slide { width: 100%; padding: 40px 24px; }
-    .slide h2 { font-size: 22px; }
-    .card-grid, .two-col, .roadmap { grid-template-columns: 1fr; }
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Yu Gothic UI", "Hiragino Sans", sans-serif; background: #f0f0f0; color: #333; font-size: 14px; }
+
+/* ========== NAV ========== */
+.top-nav { background: #2d2d7a; padding: 0 20px; display: flex; gap: 4px; align-items: stretch; }
+.top-nav-title { color: rgba(255,255,255,0.7); font-size: 12px; padding: 0 16px 0 0; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,0.2); margin-right: 8px; }
+.nav-tab { background: transparent; color: rgba(255,255,255,0.75); border: none; padding: 14px 18px; cursor: pointer; font-size: 13px; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.nav-tab:hover { color: white; background: rgba(255,255,255,0.08); }
+.nav-tab.active { color: white; font-weight: bold; border-bottom-color: #a5b4fc; background: rgba(255,255,255,0.1); }
+.nav-badge { background: #ef4444; color: white; font-size: 10px; padding: 1px 5px; border-radius: 8px; margin-left: 4px; vertical-align: middle; }
+
+/* ========== LAYOUT ========== */
+.container { max-width: 1080px; margin: 24px auto; padding: 0 16px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ========== ADMIN HEADER ========== */
+.screen-label { background: #1e1b4b; color: rgba(255,255,255,0.8); padding: 8px 20px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+.screen-label .type-badge { background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.page-header { background: white; border-bottom: 1px solid #e5e7eb; padding: 16px 24px; }
+.page-header h1 { font-size: 20px; font-weight: bold; color: #111; }
+.breadcrumb { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+.breadcrumb a { color: #5b5fc7; text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb span { margin: 0 6px; }
+
+/* ========== CARD ========== */
+.card { background: white; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 20px; overflow: hidden; }
+.card-header { padding: 14px 24px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+.card-header h2 { font-size: 16px; font-weight: bold; color: #111; }
+
+/* ========== NEW / MODIFIED HIGHLIGHT ========== */
+.card.is-new { border: 2px solid #5b5fc7; }
+.card.is-modified { border: 2px solid #f59e0b; }
+.card-tag { font-size: 11px; font-weight: bold; padding: 3px 10px; border-radius: 10px; margin-left: 8px; }
+.card-tag.new { background: #ede9fe; color: #5b5fc7; }
+.card-tag.modified { background: #fef3c7; color: #b45309; }
+
+/* ========== SECTION ========== */
+.section { padding: 0 24px 24px; }
+.section-title { font-size: 17px; font-weight: bold; padding: 22px 0 16px; color: #111; border-bottom: 2px solid #f3f4f6; margin-bottom: 0; }
+.section-title.highlight { color: #5b5fc7; }
+
+/* ========== FORM ROW ========== */
+.form-row { display: flex; border-bottom: 1px solid #f3f4f6; min-height: 60px; align-items: flex-start; }
+.form-row:last-child { border-bottom: none; }
+.form-label { width: 220px; flex-shrink: 0; color: #4b5563; padding: 18px 16px 18px 0; font-size: 13px; line-height: 1.5; }
+.form-label small { display: block; color: #9ca3af; font-size: 11px; margin-top: 2px; }
+.form-control { flex: 1; padding: 14px 0; }
+.form-control input[type="text"],
+.form-control input[type="number"],
+.form-control input[type="date"],
+.form-control input[type="email"] {
+  border: 1px solid #d1d5db; border-radius: 4px; padding: 7px 10px; font-size: 14px; outline: none; font-family: inherit;
+  transition: border-color 0.15s;
+}
+.form-control input:focus { border-color: #5b5fc7; box-shadow: 0 0 0 3px rgba(91,95,199,0.12); }
+.form-control input[disabled] { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+
+/* ========== BADGES ========== */
+.badge-req { background: #f97316; color: white; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-left: 5px; vertical-align: middle; font-weight: bold; }
+.badge-opt { background: #9ca3af; color: white; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-left: 5px; vertical-align: middle; }
+.badge-new { background: #5b5fc7; color: white; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-left: 5px; vertical-align: middle; font-weight: bold; }
+
+/* ========== TOGGLE ========== */
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; inset: 0; background: #d1d5db; border-radius: 13px; transition: .25s; }
+.slider:before { position: absolute; content: ""; width: 20px; height: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .25s; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+.toggle input:checked + .slider { background: #5b5fc7; }
+.toggle input:checked + .slider:before { transform: translateX(20px); }
+.toggle-label { font-size: 13px; color: #374151; }
+
+/* ========== RADIO ========== */
+.radio-group { display: flex; flex-direction: column; gap: 10px; }
+.radio-item { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; }
+.radio-item input[type="radio"] { accent-color: #5b5fc7; width: 15px; height: 15px; flex-shrink: 0; }
+
+/* ========== BUTTONS ========== */
+.btn { padding: 8px 20px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.15s; font-weight: 500; }
+.btn-primary { background: #5b5fc7; color: white; }
+.btn-primary:hover { background: #4a4eb5; }
+.btn-secondary { background: white; color: #5b5fc7; border: 1px solid #5b5fc7; }
+.btn-secondary:hover { background: #f5f3ff; }
+.btn-ghost { background: transparent; color: #6b7280; border: 1px solid #e5e7eb; }
+.btn-ghost:hover { background: #f9fafb; }
+.btn-danger { background: white; color: #dc2626; border: 1px solid #dc2626; }
+.btn-danger:hover { background: #fef2f2; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn-group { display: flex; gap: 8px; }
+
+/* ========== HELP ICON ========== */
+.help { display: inline-flex; width: 15px; height: 15px; background: #9ca3af; color: white; border-radius: 50%; font-size: 9px; align-items: center; justify-content: center; cursor: help; margin-left: 3px; font-weight: bold; vertical-align: middle; }
+
+/* ========== INFO BOX ========== */
+.info-box { border-radius: 5px; padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; line-height: 1.6; }
+.info-box.blue { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
+.info-box.yellow { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+.info-box.green { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+.info-box .icon { flex-shrink: 0; font-size: 15px; }
+
+/* ========== INPUT WITH UNIT ========== */
+.input-unit { display: flex; align-items: center; gap: 8px; }
+.input-unit input { width: 110px; }
+.input-unit .unit { color: #6b7280; font-size: 13px; }
+.input-hint { font-size: 12px; color: #9ca3af; margin-top: 5px; }
+
+/* ========== TABLE ========== */
+table { width: 100%; border-collapse: collapse; }
+thead th { background: #f9fafb; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #e5e7eb; }
+tbody td { padding: 12px 14px; border-bottom: 1px solid #f3f4f6; font-size: 13px; vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #fafafa; }
+.next-alloc td { background: #f5f3ff !important; }
+.next-alloc td:first-child { border-left: 3px solid #5b5fc7; }
+
+/* ========== STATUS CHIP ========== */
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.chip-green { background: #dcfce7; color: #166534; }
+.chip-yellow { background: #fef9c3; color: #854d0e; }
+.chip-red { background: #fee2e2; color: #991b1b; }
+.chip-gray { background: #f3f4f6; color: #4b5563; }
+
+/* ========== REMAINING DAYS ========== */
+.days-ok { color: #16a34a; font-weight: 600; }
+.days-warn { color: #d97706; font-weight: 600; }
+.days-ng { color: #dc2626; font-weight: 600; }
+
+/* ========== PAGE FOOTER ========== */
+.page-footer { padding: 16px 24px; border-top: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+
+/* ========== COLLAPSED HINT ========== */
+.collapsed-hint { color: #9ca3af; font-size: 13px; font-style: italic; padding: 12px 24px; border-top: 1px dashed #e5e7eb; }
+
+/* ========== PROPOSAL TABLE ========== */
+.proposal-row td:nth-child(3) { white-space: nowrap; }
+.phase-mvp { background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+.phase-p2 { background: #f0fdf4; color: #166534; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+
+/* ========== MAIL PREVIEW ========== */
+.mail-preview { border: 1px solid #e5e7eb; border-radius: 5px; padding: 14px 16px; font-size: 13px; background: #fafafa; max-width: 500px; line-height: 1.7; }
+.mail-preview .mail-subject { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; }
+.mail-preview .mail-table { margin-top: 10px; width: 100%; }
+.mail-preview .mail-table td { padding: 3px 8px; font-size: 12px; border-bottom: none; }
+.mail-preview .mail-table td:first-child { color: #6b7280; width: 130px; }
+.mail-preview .highlight-red { color: #dc2626; font-weight: bold; }
+
+/* ========== VARIATION LOT LINK ========== */
+.var-row td { vertical-align: middle; }
+.lot-count-badge { background: #ede9fe; color: #5b5fc7; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-right: 8px; }
+
+/* ========== VARIATION CARDS ========== */
+.var-filter-bar { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 16px; margin-bottom: 16px; }
+.var-filter-bar label { font-size: 12px; color: #6b7280; display: block; margin-bottom: 8px; }
+.var-filter-row { display: flex; gap: 12px; }
+.var-select { flex: 1; border: 1px solid #d1d5db; border-radius: 4px; padding: 7px 10px; font-size: 13px; font-family: inherit; color: #374151; background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239ca3af' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center; -webkit-appearance: none; }
+.var-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.var-toolbar-left { display: flex; align-items: center; gap: 6px; color: #5b5fc7; font-size: 13px; cursor: pointer; }
+.var-toolbar-right { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #6b7280; }
+.var-pagination { display: flex; align-items: center; gap: 4px; }
+.var-pagination button { background: white; border: 1px solid #e5e7eb; border-radius: 3px; padding: 3px 7px; font-size: 12px; cursor: pointer; color: #6b7280; }
+.var-pagination button:hover { border-color: #5b5fc7; color: #5b5fc7; }
+.var-card { border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 14px; background: white; transition: box-shadow 0.15s; }
+.var-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.var-thumb { width: 64px; height: 64px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #9ca3af; font-size: 10px; text-align: center; gap: 2px; flex-direction: column; }
+.var-body { flex: 1; }
+.var-name { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 10px; }
+.var-fields { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+.var-field { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #4b5563; }
+.var-field input { border: 1px solid #d1d5db; border-radius: 4px; padding: 5px 8px; font-size: 13px; font-family: inherit; outline: none; }
+.var-field input:focus { border-color: #5b5fc7; }
+.var-field .unit { color: #6b7280; font-size: 13px; }
+.var-stock { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #374151; }
+.var-stock .stock-val { color: #374151; }
+.var-stock .edit-icon { color: #5b5fc7; cursor: pointer; font-size: 14px; }
+.var-sub-fields { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.var-sub-field { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+.var-sub-field input { border: 1px solid #d1d5db; border-radius: 4px; padding: 4px 8px; font-size: 12px; font-family: inherit; width: 180px; }
+.var-menu { color: #9ca3af; cursor: pointer; font-size: 18px; padding: 4px; line-height: 1; margin-left: auto; }
+.var-lot-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6; display: flex; align-items: center; gap: 12px; }
+.var-lot-stock { font-size: 13px; color: #374151; }
+.var-lot-count { background: #ede9fe; color: #5b5fc7; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+.var-lot-btn { margin-left: auto; }
+
+/* ========== DIMMED ========== */
+.dimmed { opacity: 0.45; pointer-events: none; }
+
+/* ========== LEGACY UI (在庫管理画面の既存スタイル再現) ========== */
+.legacy-wrap { font-family: Meiryo, "Hiragino Kaku Gothic ProN", sans-serif; font-size: 13px; color: #333; background: #fff; max-width: 960px; margin: 24px auto; padding: 0 16px; }
+.legacy-omit { text-align: center; color: #9ca3af; font-size: 12px; padding: 10px 0 14px; letter-spacing: 0.05em; }
+.legacy-omit hr { border: none; border-top: 1px dashed #d1d5db; margin: 6px 0; }
+.legacy-section { margin-bottom: 20px; }
+.legacy-section-title { font-weight: bold; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+.legacy-section-title .bullet { color: #5b5fc7; font-size: 16px; }
+.legacy-desc { color: #555; margin: 0 0 10px; line-height: 1.7; }
+.legacy-table { border-collapse: collapse; width: 100%; margin-bottom: 0; }
+.legacy-table th, .legacy-table td { border: 1px solid #ccc; padding: 7px 12px; vertical-align: middle; font-size: 13px; }
+.legacy-table th { background: #f5f5f5; text-align: left; font-weight: normal; white-space: nowrap; }
+.legacy-table .reg-btn { text-align: center; width: 110px; }
+.legacy-table .reg-btn button { background: #eee; border: 1px solid #aaa; padding: 4px 14px; cursor: pointer; font-size: 13px; border-radius: 2px; }
+.legacy-table input[type="number"],
+.legacy-table input[type="text"] { border: 1px solid #aaa; padding: 3px 6px; font-size: 13px; font-family: inherit; }
+.legacy-new-badge { background: #c84b00; color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 3px; vertical-align: middle; font-weight: bold; }
+.legacy-existing { opacity: 0.5; }
+.legacy-separator { border: none; border-top: 1px solid #e5e7eb; margin: 20px 0; }
 </style>
 </head>
 <body>
 
-<!-- ============ Slide 1: 表紙 ============ -->
-<section class="slide cover">
-  <p class="eyebrow">Product Proposal · 食品EC強化</p>
-  <h1>賞味期限・ロット<br>在庫管理機能</h1>
-  <p class="subtitle">食品BtoB業務パック 中核機能</p>
-  <span class="badge">優先度スコア 23 / 30点　→　優先度：高</span>
-  <p class="date">2026年5月　AIプロダクトチーム</p>
-  <span class="page-num">01</span>
-</section>
+<!-- ====== TOP NAV ====== -->
+<div class="top-nav">
+  <div class="top-nav-title">makeshop 管理画面 UIモック</div>
+  <button class="nav-tab active" onclick="showPage('p1',0)">① 商品登録画面<span class="nav-badge">修正</span></button>
+  <button class="nav-tab" onclick="showPage('p2',1)">② ロット管理画面<span class="nav-badge" style="background:#5b5fc7">新規</span></button>
+  <button class="nav-tab" onclick="showPage('p3',2)">③ アラートメール設定<span class="nav-badge">修正</span></button>
+  <button class="nav-tab" onclick="showPage('p4',3)">④ 対応画面まとめ</button>
+  <button class="nav-tab" onclick="showPage('p5',4)">⑤ 関係図・フロー図</button>
+</div>
 
-<!-- ============ Slide 2: 背景と課題 ============ -->
-<section class="slide">
-  <h2>背景と課題</h2>
-  <ul class="bullets">
-    <li><strong>現在の在庫管理は「数量」のみ：</strong>makeshopの在庫管理は数量だけで管理されており、食品ECに不可欠な「時間軸（賞味期限・ロット）」の概念が存在しない</li>
-    <li><strong>現場は目視・記憶・手作業：</strong>オーム乳業（生クリーム・賞味期限20日）では「出荷最低残8日」ルールをEC上で強制できず、出荷前日に倉庫担当が実在庫を目視でロット当て直している。担当者が変われば即崩壊する</li>
-    <li><strong>廃棄ロスと機会損失が同時に発生：</strong>期限管理ができないため、廃棄予定在庫の訳あり品化・割引販売への切り替えが手動対応のみ。売上化できる在庫を捨てている</li>
-    <li><strong>食品EC市場は4兆円規模で成長中：</strong>BtoB・製造直販・D2C食品事業者はShopifyの食品商習慣非対応に課題を感じており、国産カートへの回帰ニーズが存在する。差別化の核心になる</li>
-    <li><strong>「食品BtoB業務パック」の中核機能：</strong>ヒアリング5社中3社（オーム乳業・エスポア・王子サーモン）が賞味期限管理を最優先・高優先と評価</li>
-  </ul>
-  <span class="page-num">02</span>
-</section>
 
-<!-- ============ Slide 3: 解決する問題 ============ -->
-<section class="slide">
-  <h2>解決する問題</h2>
-  <div class="card-grid">
+<!-- ================================================================
+     PAGE 1: 商品登録画面（変更箇所のみ）
+     ================================================================ -->
+<div id="p1" class="page active">
+
+  <div class="screen-label">
+    <span>📋 商品登録画面</span>
+    <span class="type-badge">既存画面修正</span>
+    <span style="color:rgba(255,255,255,0.5)">— 変更・追加箇所のみ抜粋表示。青枠が新規追加、黄枠が既存修正。</span>
+  </div>
+
+  <div class="page-header">
+    <h1>商品登録</h1>
+    <div class="breadcrumb"><a href="#">商品管理</a><span>›</span><a href="#">商品一覧</a><span>›</span>商品登録</div>
+  </div>
+
+  <div class="container">
+
+    <!-- 数量情報（既存・参考） -->
     <div class="card">
-      <h3>対象ユーザー</h3>
-      <p>食品EC運用担当者・EC事業責任者（中小〜中堅食品メーカー）。年商5〜10億の地方食品メーカー。BtoB卸取引を併用する製造直販・D2C事業者</p>
-      <p class="purpose">▶ オーム乳業・エスポア・王子サーモンが想定主要顧客</p>
+      <div class="card-header">
+        <h2>数量情報 <span style="font-size:12px; color:#9ca3af; font-weight: normal;">（既存セクション・変更なし）</span></h2>
+      </div>
+      <div class="section">
+        <div class="form-row">
+          <div class="form-label">在庫数 <span class="help">?</span></div>
+          <div class="form-control">
+            <div class="toggle-wrap">
+              <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+              <span class="toggle-label">設定する</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">注文限度 <span class="help">?</span></div>
+          <div class="form-control">
+            <div class="toggle-wrap">
+              <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+              <span class="toggle-label">設定する</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <h3>課題</h3>
-      <p>賞味期限管理が「在庫数」だけでは制御できず、出荷可否判断が担当者の目視・記憶に完全依存している</p>
-      <p class="purpose">▶ 担当者属人化→退職リスク・引き継ぎ困難</p>
+
+    <!-- ★ NEW: ロット・賞味期限管理 -->
+    <div class="card is-new">
+      <div class="card-header">
+        <h2>ロット・賞味期限管理 <span class="card-tag new">✦ 新規追加セクション</span></h2>
+      </div>
+      <div class="section">
+
+        <div class="info-box blue" style="margin-top: 16px; margin-bottom: 4px;">
+          <span class="icon">ℹ️</span>
+          <span>有効にすると、バリエーション（SKU）ごとにロット番号・賞味期限・在庫数を管理できます。注文受付時に<strong>FEFO（賞味期限の近い順）で自動引き当て</strong>が行われます。</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            ロット管理
+            <span class="help" title="有効にすると在庫数はロット在庫の合計が自動反映されます。バリエーション直接編集は無効になります。">?</span>
+          </div>
+          <div class="form-control">
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="lot-toggle" onchange="toggleLot(this)">
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-label" id="lot-label">有効にする</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="lot-fields" class="dimmed">
+          <div class="form-row">
+            <div class="form-label">
+              出荷可能最低残日数
+              <span class="help" title="注文受付時、賞味期限までの残日数がこの値を下回るロットは引き当て対象から自動除外されます。0または空欄=制限なし。">?</span>
+              <small>0=制限なし</small>
+            </div>
+            <div class="form-control">
+              <div class="input-unit">
+                <input type="number" id="min-days" placeholder="例：30" min="0" style="width: 100px;" oninput="updateDayHint(this)">
+                <span class="unit">日</span>
+              </div>
+              <div class="input-hint" id="day-hint">未設定の場合、残日数による引き当て制限はありません。</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="card">
-      <h3>現状の問題</h3>
-      <p>EC上に賞味期限情報がないためFEFO（期限近い順の先入先出）が実現できず、残日数基準以下の誤出荷を防ぐ仕組みもない</p>
-      <p class="purpose">▶ 既存機能では代替不可能な領域</p>
+
+    <!-- ★ MODIFIED: バリエーション設定（実際の画面に合わせたカード型） -->
+    <div class="card is-modified">
+      <div class="card-header">
+        <h2>バリエーション設定 <span class="help">?</span> <a href="#" style="font-size: 13px; color: #5b5fc7; font-weight: normal; margin-left: 8px; text-decoration: none;">項目を編集する</a> <span class="card-tag modified">⚠ 既存修正</span></h2>
+      </div>
+      <div class="section" style="padding-top: 16px;">
+
+        <!-- 合計在庫数 -->
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px;">
+          <span style="font-size: 13px; color: #4b5563;">合計在庫数 <span class="help">?</span></span>
+          <span id="total-stock-label" style="font-size: 13px; font-weight: 600; color: #374151;">無制限</span>
+        </div>
+
+        <!-- フィルター -->
+        <div class="var-filter-bar">
+          <label>バリエーションを絞り込む</label>
+          <div class="var-filter-row">
+            <select class="var-select"><option>フレーバー</option><option>プレーン</option><option>チョコ</option><option>いちご</option></select>
+            <select class="var-select"><option>容量</option><option>100グラム</option><option>300グラム</option></select>
+          </div>
+        </div>
+
+        <!-- ツールバー -->
+        <div class="var-toolbar">
+          <div class="var-toolbar-left">
+            <span style="font-size: 15px;">✏️</span>
+            <span>まとめて編集する</span>
+          </div>
+          <div class="var-toolbar-right">
+            <span>1〜6件表示 6件中</span>
+            <div class="var-pagination">
+              <button>«</button><button>‹</button><button>›</button><button>»</button>
+            </div>
+            <select class="var-select" style="width: 80px; padding: 3px 24px 3px 8px;"><option>10件</option><option>20件</option><option>50件</option></select>
+          </div>
+        </div>
+
+        <!-- ロット有効時の注意 -->
+        <div id="lot-warning-banner" style="display:none;" class="info-box yellow" style="margin-bottom: 12px;">
+          <span class="icon">⚠️</span>
+          <span>ロット管理が有効です。在庫数はロット在庫の合計が自動反映されます。バリエーション単体での在庫数直接編集はできません。</span>
+        </div>
+
+        <!-- バリエーションカード一覧 -->
+        <div id="var-cards">
+
+          <!-- カード共通テンプレート（通常状態） -->
+          <div class="var-card" data-var="プレーン　100グラム" data-lots="3" data-stock="320">
+            <div class="var-thumb">
+              <span style="font-size: 18px; color: #d1d5db;">🖼</span>
+              <span>No Image</span>
+            </div>
+            <div class="var-body">
+              <div style="display:flex; align-items:flex-start; justify-content: space-between;">
+                <div class="var-name">プレーン　100グラム</div>
+                <span class="var-menu">⋮</span>
+              </div>
+              <div class="var-fields">
+                <div class="var-field">
+                  <span>販売価格：</span>
+                  <input type="text" style="width: 100px;" placeholder="">
+                  <span class="unit">円</span>
+                </div>
+                <div class="var-stock">
+                  <span>在庫数：</span>
+                  <span class="stock-val" data-normal="無制限" data-lot="">無制限</span>
+                  <span class="edit-icon">✏️</span>
+                </div>
+              </div>
+              <div class="var-sub-fields">
+                <div class="var-sub-field">
+                  <span>バリエーション独自コード：</span>
+                  <input type="text">
+                </div>
+                <div class="var-sub-field">
+                  <span>JANコード：</span>
+                  <input type="text" style="width: 140px;">
+                </div>
+              </div>
+              <!-- ロット管理ボタン（lot-onクラスで表示） -->
+              <div class="var-lot-row" style="display:none;">
+                <span class="var-lot-stock">在庫数：<strong>320個</strong></span>
+                <span class="var-lot-count">3ロット登録済み</span>
+                <button class="btn btn-secondary btn-sm var-lot-btn" onclick="goToLot()">ロットを管理する →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="var-card" data-var="プレーン　300グラム" data-lots="2" data-stock="180">
+            <div class="var-thumb">
+              <span style="font-size: 18px; color: #d1d5db;">🖼</span>
+              <span>No Image</span>
+            </div>
+            <div class="var-body">
+              <div style="display:flex; align-items:flex-start; justify-content: space-between;">
+                <div class="var-name">プレーン　300グラム</div>
+                <span class="var-menu">⋮</span>
+              </div>
+              <div class="var-fields">
+                <div class="var-field">
+                  <span>販売価格：</span>
+                  <input type="text" style="width: 100px;">
+                  <span class="unit">円</span>
+                </div>
+                <div class="var-stock">
+                  <span>在庫数：</span>
+                  <span class="stock-val">無制限</span>
+                  <span class="edit-icon">✏️</span>
+                </div>
+              </div>
+              <div class="var-sub-fields">
+                <div class="var-sub-field"><span>バリエーション独自コード：</span><input type="text"></div>
+                <div class="var-sub-field"><span>JANコード：</span><input type="text" style="width: 140px;"></div>
+              </div>
+              <div class="var-lot-row" style="display:none;">
+                <span class="var-lot-stock">在庫数：<strong>180個</strong></span>
+                <span class="var-lot-count">2ロット登録済み</span>
+                <button class="btn btn-secondary btn-sm var-lot-btn" onclick="goToLot()">ロットを管理する →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="var-card" data-var="チョコ　100グラム" data-lots="0" data-stock="0">
+            <div class="var-thumb">
+              <span style="font-size: 18px; color: #d1d5db;">🖼</span>
+              <span>No Image</span>
+            </div>
+            <div class="var-body">
+              <div style="display:flex; align-items:flex-start; justify-content: space-between;">
+                <div class="var-name">チョコ　100グラム</div>
+                <span class="var-menu">⋮</span>
+              </div>
+              <div class="var-fields">
+                <div class="var-field"><span>販売価格：</span><input type="text" style="width: 100px;"><span class="unit">円</span></div>
+                <div class="var-stock"><span>在庫数：</span><span class="stock-val">無制限</span><span class="edit-icon">✏️</span></div>
+              </div>
+              <div class="var-sub-fields">
+                <div class="var-sub-field"><span>バリエーション独自コード：</span><input type="text"></div>
+                <div class="var-sub-field"><span>JANコード：</span><input type="text" style="width: 140px;"></div>
+              </div>
+              <div class="var-lot-row" style="display:none;">
+                <span class="var-lot-stock">在庫数：<strong>0個</strong></span>
+                <span class="var-lot-count" style="background:#fee2e2; color:#991b1b;">ロット未登録</span>
+                <button class="btn btn-secondary btn-sm var-lot-btn" onclick="goToLot()">ロットを管理する →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="var-card" data-var="チョコ　300グラム" data-lots="1" data-stock="50">
+            <div class="var-thumb">
+              <span style="font-size: 18px; color: #d1d5db;">🖼</span>
+              <span>No Image</span>
+            </div>
+            <div class="var-body">
+              <div style="display:flex; align-items:flex-start; justify-content: space-between;">
+                <div class="var-name">チョコ　300グラム</div>
+                <span class="var-menu">⋮</span>
+              </div>
+              <div class="var-fields">
+                <div class="var-field"><span>販売価格：</span><input type="text" style="width: 100px;"><span class="unit">円</span></div>
+                <div class="var-stock"><span>在庫数：</span><span class="stock-val">無制限</span><span class="edit-icon">✏️</span></div>
+              </div>
+              <div class="var-sub-fields">
+                <div class="var-sub-field"><span>バリエーション独自コード：</span><input type="text"></div>
+                <div class="var-sub-field"><span>JANコード：</span><input type="text" style="width: 140px;"></div>
+              </div>
+              <div class="var-lot-row" style="display:none;">
+                <span class="var-lot-stock">在庫数：<strong>50個</strong></span>
+                <span class="var-lot-count">1ロット登録済み</span>
+                <button class="btn btn-secondary btn-sm var-lot-btn" onclick="goToLot()">ロットを管理する →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="var-card" data-var="いちご　100グラム" data-lots="2" data-stock="200">
+            <div class="var-thumb">
+              <span style="font-size: 18px; color: #d1d5db;">🖼</span>
+              <span>No Image</span>
+            </div>
+            <div class="var-body">
+              <div style="display:flex; align-items:flex-start; justify-content: space-between;">
+                <div class="var-name">いちご　100グラム</div>
+                <span class="var-menu">⋮</span>
+              </div>
+              <div class="var-fields">
+                <div class="var-field"><span>販売価格：</span><input type="text" style="width: 100px;"><span class="unit">円</span></div>
+                <div class="var-stock"><span>在庫数：</span><span class="stock-val">無制限</span><span class="edit-icon">✏️</span></div>
+              </div>
+              <div class="var-sub-fields">
+                <div class="var-sub-field"><span>バリエーション独自コード：</span><input type="text"></div>
+                <div class="var-sub-field"><span>JANコード：</span><input type="text" style="width: 140px;"></div>
+              </div>
+              <div class="var-lot-row" style="display:none;">
+                <span class="var-lot-stock">在庫数：<strong>200個</strong></span>
+                <span class="var-lot-count">2ロット登録済み</span>
+                <button class="btn btn-secondary btn-sm var-lot-btn" onclick="goToLot()">ロットを管理する →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="var-card" data-var="いちご　300グラム" data-lots="1" data-stock="90">
+            <div class="var-thumb">
+              <span style="font-size: 18px; color: #d1d5db;">🖼</span>
+              <span>No Image</span>
+            </div>
+            <div class="var-body">
+              <div style="display:flex; align-items:flex-start; justify-content: space-between;">
+                <div class="var-name">いちご　300グラム</div>
+                <span class="var-menu">⋮</span>
+              </div>
+              <div class="var-fields">
+                <div class="var-field"><span>販売価格：</span><input type="text" style="width: 100px;"><span class="unit">円</span></div>
+                <div class="var-stock"><span>在庫数：</span><span class="stock-val">無制限</span><span class="edit-icon">✏️</span></div>
+              </div>
+              <div class="var-sub-fields">
+                <div class="var-sub-field"><span>バリエーション独自コード：</span><input type="text"></div>
+                <div class="var-sub-field"><span>JANコード：</span><input type="text" style="width: 140px;"></div>
+              </div>
+              <div class="var-lot-row" style="display:none;">
+                <span class="var-lot-stock">在庫数：<strong>90個</strong></span>
+                <span class="var-lot-count">1ロット登録済み</span>
+                <button class="btn btn-secondary btn-sm var-lot-btn" onclick="goToLot()">ロットを管理する →</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /var-cards -->
+
+      </div>
     </div>
-    <div class="card">
-      <h3>影響</h3>
-      <p>誤出荷によるクレーム・返品・信頼損失。廃棄ロスによる加盟店GMVの機会損失。運用崩壊リスク</p>
-      <p class="purpose">▶ 解消で廃棄コスト削減＋GMV向上を実現</p>
+
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 2: ロット管理画面（新規）
+     ================================================================ -->
+<div id="p2" class="page">
+
+  <div class="screen-label">
+    <span>🆕 ロット管理画面</span>
+    <span class="type-badge" style="background: rgba(91,95,199,0.3);">新規作成</span>
+    <span style="color:rgba(255,255,255,0.5)">— 商品登録 › バリエーション設定 › ロットを管理する から遷移</span>
+  </div>
+
+  <div class="page-header">
+    <h1>ロット管理</h1>
+    <div class="breadcrumb">
+      <a href="#">商品管理</a><span>›</span>
+      <a href="#">商品一覧</a><span>›</span>
+      <a href="#" onclick="showPage('p1',0)">商品登録</a><span>›</span>
+      ロット管理
     </div>
   </div>
-  <span class="page-num">03</span>
-</section>
 
-<!-- ============ Slide 4: 機能概要 ============ -->
-<section class="slide">
-  <h2>機能概要（MVP スコープ）</h2>
-  <div class="two-col">
-    <div>
-      <div class="col-item">
-        <span class="label">機能① ロット登録</span>
-        <span class="value">商品バリエーション単位に賞味期限・製造日・入荷日・ロット在庫数を登録。手動入力と商品情報一括アップロードCSVの両対応（CSVはMVPに含む）</span>
-        <span class="value" style="display:block; margin-top:8px; padding-top:8px; border-top:1px solid var(--color-border); font-size:13px; color:var(--color-pattern-60);">※「ロット」とは同じ条件で製造・入荷された商品のひとまとまりのこと。同じ商品でも製造日が異なれば賞味期限が異なるため、ロット単位で在庫を管理することで「期限が近いものから出荷する（FEFO）」制御が初めて可能になる。</span>
-      </div>
-      <div class="col-item">
-        <span class="label">機能② FEFO自動引当</span>
-        <span class="value">注文受付時に賞味期限が近い順のロットから自動引当。複数ロットにまたがる場合もトランザクション管理で整合性を担保</span>
-        <span class="value" style="display:block; margin-top:8px; padding-top:8px; border-top:1px solid var(--color-border); font-size:13px; color:var(--color-pattern-60);">※「FEFO（First Expired, First Out）」とは「期限が近いものから先に出荷する」方式のこと。賞味期限が古いロットを優先して出荷することで、期限切れ廃棄を最小化する。一般的な倉庫管理のFIFO（先入れ先出し）の食品特化版にあたる。</span>
-      </div>
-      <div class="col-item">
-        <span class="label">機能③ 残日数バリデーション</span>
-        <span class="value">商品ごとに出荷可能な最低残日数（例：残8日以上）を設定。基準を下回るロットを引当対象から自動除外し、誤出荷を防止</span>
-      </div>
-    </div>
-    <div>
-      <div class="col-item">
-        <span class="label">機能④ アラートメール</span>
-        <span class="value">設定した残日数閾値を下回ったロットが発生した場合に管理者へ自動送信（日次バッチ）。既存在庫アラート機能を流用・拡張</span>
-      </div>
-      <div class="col-item">
-        <span class="label">機能⑤ 訳あり品自動切替（Phase2）</span>
-        <span class="value">期限切迫在庫を設定閾値で自動的に訳あり品へ切り替え（価格・ラベル変更）。ブランドリスク対策として管理者承認オプション付き</span>
-      </div>
-      <div class="col-item">
-        <span class="label">機能⑥ 基幹API同期（Phase3）</span>
-        <span class="value">基幹システムとのAPIによるロット情報の定時連動。手動入力を不要にし、2026年8月のオーム乳業基幹刷新に合わせてリリース</span>
-      </div>
-    </div>
-  </div>
-  <span class="page-num">04</span>
-</section>
+  <div class="container">
 
-<!-- ============ Slide 5: 提供価値 ============ -->
-<section class="slide">
-  <h2>提供価値</h2>
-  <div class="card-grid">
+    <!-- 商品情報ヘッダー -->
     <div class="card">
-      <h3>UX・業務効率</h3>
-      <p>出荷前の目視ロット確認作業をゼロへ。倉庫担当者の「出荷前日のロット手動当て直し」業務を半自動化。商品情報一括アップロードCSVで入荷時の登録負荷を最小化</p>
+      <div class="section" style="padding: 16px 24px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: center;">
+          <div><span style="font-size: 12px; color: #9ca3af;">商品名</span><div style="font-weight: 600; margin-top: 2px;">サンプル食品（チョコレート）</div></div>
+          <div><span style="font-size: 12px; color: #9ca3af;">バリエーション</span><div style="font-weight: 600; margin-top: 2px;">Sサイズ / レッド（<span style="font-family:monospace">SKU-001</span>）</div></div>
+          <div><span style="font-size: 12px; color: #9ca3af;">出荷可能最低残日数</span><div id="p2-min-days-label" style="font-weight: 600; margin-top: 2px; color: #5b5fc7;">30日</div></div>
+          <div><span style="font-size: 12px; color: #9ca3af;">ロット総在庫数</span><div style="font-weight: 700; font-size: 18px; color: #16a34a; margin-top: 2px;">320個</div></div>
+        </div>
+      </div>
     </div>
+
+    <!-- ロット追加フォーム -->
+    <div class="card is-new">
+      <div class="card-header">
+        <h2 id="lot-form-title">ロットを追加する <span id="lot-form-tag" class="card-tag new">新規追加フォーム</span></h2>
+        <button class="btn btn-ghost btn-sm" onclick="toggleAddForm()">▲ 閉じる</button>
+      </div>
+      <div id="add-form" class="section">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+
+          <div class="form-row" style="grid-column: 1 / -1;">
+            <div class="form-label">ロットNo. <span class="badge-req">必須</span></div>
+            <div class="form-control">
+              <input id="f-lot-no" type="text" placeholder="例：LOT-2025-001" style="width: 280px;">
+              <div class="input-hint">任意の番号・コードを設定できます（英数字）</div>
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-column: 1 / -1;">
+            <div class="form-label">賞味期限 <span class="badge-req">必須</span></div>
+            <div class="form-control">
+              <input id="f-expiry" type="date" value="" style="width: 180px;">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">製造日 <span class="badge-opt">任意</span></div>
+            <div class="form-control">
+              <input id="f-mfg" type="date" style="width: 180px;">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">入荷日 <span class="badge-opt">任意</span></div>
+            <div class="form-control">
+              <input id="f-arrival" type="date" style="width: 180px;">
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-column: 1 / -1;">
+            <div class="form-label">ロット在庫数 <span class="badge-req">必須</span></div>
+            <div class="form-control">
+              <div class="input-unit">
+                <input id="f-stock" type="number" placeholder="例：100" min="0" style="width: 120px;">
+                <span class="unit">個</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="padding: 8px 0 4px; display: flex; gap: 10px;">
+          <button id="lot-form-submit" class="btn btn-primary" onclick="saveLot()">保存する</button>
+          <button class="btn btn-ghost" onclick="resetLotForm()">キャンセル</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ロット一覧 -->
     <div class="card">
-      <h3>売上・GMV向上</h3>
-      <p>廃棄予定在庫を訳あり品として割引販売（Phase2）することで、捨てていた在庫を売上に転換。加盟店GMVを向上。フードロス削減のPR効果も獲得</p>
+      <div class="card-header">
+        <h2>登録済みロット一覧</h2>
+        <div class="info-box blue" style="margin: 0; padding: 6px 12px; font-size: 12px;">
+          <span>📌</span>
+          <span>引き当ては<strong>賞味期限の近い順（FEFO）</strong>で行われます。残日数が<strong id="p2-min-days-fefo">30日未満</strong>のロットは自動除外。</span>
+        </div>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>ロットNo.</th>
+              <th>賞味期限</th>
+              <th>残日数</th>
+              <th>製造日</th>
+              <th>入荷日</th>
+              <th>在庫数</th>
+              <th>引き当てステータス</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="lot-tbody">
+            <tr data-days="0">
+              <td>
+                <div style="font-weight: 600;">LOT-2026-003</div>
+                <div class="next-alloc-label" style="display:none; font-size: 11px; color: #5b5fc7; margin-top: 2px;">← 次回引き当て対象</div>
+              </td>
+              <td>2026-06-06</td>
+              <td><span class="days-ng">—</span></td>
+              <td>2026-05-01</td>
+              <td>2026-05-10</td>
+              <td>50個</td>
+              <td>
+                <span class="chip chip-red">⛔ 除外（残日数不足）</span>
+              </td>
+              <td class="btn-group"><button class="btn btn-ghost btn-sm" onclick="editLot('LOT-2026-003','2026-06-06','2026-05-01','2026-05-10',50)">編集</button><button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button></td>
+            </tr>
+            <tr data-days="0" class="next-alloc">
+              <td>
+                <div style="font-weight: 600;">LOT-2026-001</div>
+                <div class="next-alloc-label" style="font-size: 11px; color: #5b5fc7; margin-top: 2px;">← 次回引き当て対象</div>
+              </td>
+              <td>2026-08-13</td>
+              <td><span class="days-ok">—</span></td>
+              <td>2026-01-10</td>
+              <td>2026-01-15</td>
+              <td>120個</td>
+              <td>
+                <span class="chip chip-green">✓ 引き当て可能</span>
+              </td>
+              <td class="btn-group"><button class="btn btn-ghost btn-sm" onclick="editLot('LOT-2026-001','2026-08-13','2026-01-10','2026-01-15',120)">編集</button><button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button></td>
+            </tr>
+            <tr data-days="0">
+              <td>
+                <div style="font-weight: 600;">LOT-2026-002</div>
+                <div class="next-alloc-label" style="display:none; font-size: 11px; color: #5b5fc7; margin-top: 2px;">← 次回引き当て対象</div>
+              </td>
+              <td>2026-10-22</td>
+              <td><span class="days-ok">—</span></td>
+              <td>2026-02-05</td>
+              <td>2026-02-12</td>
+              <td>150個</td>
+              <td>
+                <span class="chip chip-green">✓ 引き当て可能</span>
+              </td>
+              <td class="btn-group"><button class="btn btn-ghost btn-sm" onclick="editLot('LOT-2026-002','2026-10-22','2026-02-05','2026-02-12',150)">編集</button><button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
     <div class="card">
-      <h3>競争優位性</h3>
-      <p>Shopifyにはネイティブなロット・FEFO管理機能がなく、日本の食品商習慣（残日数N日以上ルール）に特化した国産カートとしての差別化が明確になる</p>
+      <div class="page-footer">
+        <button class="btn btn-ghost" onclick="showPage('p1',0)">← 商品登録に戻る</button>
+      </div>
     </div>
+
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 3: 在庫管理画面（修正）
+     ================================================================ -->
+<div id="p3" class="page">
+
+  <div class="screen-label">
+    <span>⚙️ 在庫アラートメール設定</span>
+    <span class="type-badge">既存画面修正</span>
+    <span style="color:rgba(255,255,255,0.5)">— 「賞味期限アラートの設定」セクションを既存の在庫管理画面に追加</span>
+  </div>
+
+  <!-- 実際の在庫管理画面のヘッダー再現 -->
+  <div style="background: white; padding: 8px 20px; border-bottom: 1px solid #ddd; font-size: 13px; color: #5b5fc7;">
+    <a href="#" style="color: #5b5fc7; text-decoration: none;">ホーム</a>
+    <span style="color: #aaa; margin: 0 6px;">/</span>
+    <a href="#" style="color: #5b5fc7; text-decoration: none;">商品管理</a>
+    <span style="color: #aaa; margin: 0 6px;">/</span>
+    <a href="#" style="color: #5b5fc7; text-decoration: none;">機能・設定</a>
+    <span style="color: #aaa; margin: 0 6px;">/</span>
+    <span style="color: #333;">在庫管理</span>
+  </div>
+
+  <div class="legacy-wrap">
+
+    <h1 style="font-size: 22px; font-weight: bold; margin: 20px 0 24px; color: #111;">在庫管理</h1>
+
+    <!-- 上部省略を示すインジケーター -->
+    <div class="legacy-omit">
+      <hr>
+      上部（残り在庫のアラームの設定・在庫状態検索）は省略
+      <hr>
+    </div>
+
+    <!-- 既存: 在庫ビジュアル設定（既存・変更なし） -->
+    <div class="legacy-section legacy-existing">
+      <p class="legacy-section-title">
+        <span class="bullet">■</span>
+        在庫ビジュアル（○△×）表示機能の設定
+        <span style="font-size: 12px; color: #9ca3af; font-weight: normal;">（既存・変更なし）</span>
+      </p>
+      <table class="legacy-table">
+        <tr>
+          <td>
+            <label style="margin-right: 16px;"><input type="radio" name="vis-p3" checked style="accent-color: #5b5fc7;"> 数字で表示</label>
+            <label style="margin-right: 16px;"><input type="radio" name="vis-p3" style="accent-color: #5b5fc7;"> 「○△×」で表示</label>
+            △ 残りわずかを表示する数量：<input type="number" value="5" style="width: 48px;"> 個
+          </td>
+          <td class="reg-btn"><button>登録する</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <hr class="legacy-separator">
+
+    <!-- ★ NEW: 賞味期限アラートの設定（新管理画面デザイン） -->
+    <div class="card is-new" style="margin-top: 8px;">
+      <div class="card-header">
+        <h2>賞味期限アラートの設定 <span class="card-tag new">✦ 新規追加セクション</span></h2>
+      </div>
+      <div class="section">
+
+        <div class="info-box blue" style="margin-top: 16px;">
+          <span class="icon">ℹ️</span>
+          <span>ロット在庫の賞味期限残日数が設定した日数以下になったとき、管理者へ自動でアラームメールを送信します。毎日バッチ処理で確認・通知されます。</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            賞味期限アラームメール
+            <span class="help" title="有効にするとアラート閾値・送信先の設定が反映されます">?</span>
+          </div>
+          <div class="form-control">
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="expiry-toggle2" onchange="toggleExpiry2(this)" checked>
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-label">送信する</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="expiry-fields2">
+          <div class="form-row">
+            <div class="form-label">
+              アラート閾値（残日数）
+              <span class="help" title="この日数以下のロットが存在する場合にメールを送信します">?</span>
+            </div>
+            <div class="form-control">
+              <div class="input-unit">
+                <input type="number" value="30" min="1" style="width: 80px;">
+                <span class="unit">日以下のロットが存在する場合に通知</span>
+              </div>
+              <div class="input-hint">例：30を設定すると、賞味期限まで30日以内のロットが1件でもある日にメールが届きます</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">送信先メールアドレス1</div>
+            <div class="form-control">
+              <input type="email" placeholder="example@shop.jp" style="width: 320px;">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">送信先メールアドレス2 <span class="badge-opt">任意</span></div>
+            <div class="form-control">
+              <input type="email" style="width: 320px;">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">送信先メールアドレス3 <span class="badge-opt">任意</span></div>
+            <div class="form-control">
+              <input type="email" style="width: 320px;">
+            </div>
+          </div>
+
+          <div class="form-row" style="border-bottom: none; padding-bottom: 0;">
+            <div class="form-label"></div>
+            <div class="form-control" style="padding-top: 12px;">
+              <button class="btn btn-primary">登録する</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /legacy-wrap -->
+</div>
+
+
+<!-- ================================================================
+     PAGE 4: 対応画面まとめ
+     ================================================================ -->
+<div id="p4" class="page">
+
+  <div class="screen-label">
+    <span>📋 要件定義書から導出した対応画面一覧</span>
+  </div>
+
+  <div class="page-header">
+    <h1>対応が必要な画面まとめ</h1>
+    <div class="breadcrumb">賞味期限ロット在庫管理機能 / UIモック</div>
+  </div>
+
+  <div class="container">
+
     <div class="card">
-      <h3>リスク低減</h3>
-      <p>出荷最低残日数の強制バリデーションで誤出荷クレームを防止。担当者属人化運用を排除し、業務継続性を担保。CSサポート問い合わせの削減</p>
-    </div>
-  </div>
-  <span class="page-num">05</span>
-</section>
-
-<!-- ============ Slide 6: KPI・成功指標 ============ -->
-<section class="slide">
-  <h2>KPI・成功指標</h2>
-  <h3>定量指標（KPI）</h3>
-  <ul class="bullets">
-    <li><strong>機能利用率：</strong>食品EC加盟店のうち本機能を有効化している割合。目標：食品EC加盟店の30%以上（リリース後12ヶ月以内）</li>
-    <li><strong>GMV成長率：</strong>食品EC加盟店のGMV前年比成長率。訳あり品売上転換による廃棄ロス削減効果の数値化（Phase2以降）</li>
-    <li><strong>誤出荷クレーム削減：</strong>賞味期限関連の誤出荷クレーム件数をゼロへ。CSサポート問い合わせ50%削減（リリース後6ヶ月以内）</li>
-    <li><strong>新規加盟店獲得：</strong>食品ECカテゴリの新規加盟店数。「賞味期限管理」機能を選定理由に挙げた件数を追跡</li>
-  </ul>
-  <h3>成功指標</h3>
-  <ul class="bullets">
-    <li>ヒアリング対象企業（オーム乳業等）におけるMVP後3ヶ月以内の継続利用確認</li>
-    <li>MVPの商品情報一括アップロードCSV継続率：機能登録後1ヶ月時点で70%以上が継続使用</li>
-    <li>Phase2（訳あり品切替）リリース後の廃棄ロス削減額を加盟店にレポーティングできること</li>
-  </ul>
-  <span class="page-num">06</span>
-</section>
-
-<!-- ============ Slide 7: リスクと対策 ============ -->
-<section class="slide">
-  <h2>リスクと対策</h2>
-  <div class="two-col">
-    <div>
-      <h3>想定リスク</h3>
-      <div class="col-item">
-        <span class="label">技術リスク</span>
-        <span class="value">DBスキーマへのロットテーブル追加により全加盟店の在庫データへのマイグレーションが必要。同時注文時のRace Condition対策が必要。温度帯担当との統合コスト増大リスク</span>
-      </div>
-      <div class="col-item">
-        <span class="label">運用リスク</span>
-        <span class="value">基幹連携がないMVP段階では手動入力が必要で継続利用率が低下するリスク。→ 商品情報一括アップロードCSVをMVPに含めることで緩和</span>
-      </div>
-      <div class="col-item">
-        <span class="label">ビジネスリスク</span>
-        <span class="value">訳あり品自動切替が贈答品中心の加盟店（王子サーモン等）に受け入れられないリスク。→ Phase2で管理者承認オプションを設計して対処</span>
-      </div>
-    </div>
-    <div>
-      <h3>開発観点</h3>
-      <div class="col-item">
-        <span class="label">難易度</span>
-        <span class="value">中〜高。DBスキーマ変更と既存在庫との整合性担保が最大の技術難度。FEFO引当のトランザクション設計が必要</span>
-      </div>
-      <div class="col-item">
-        <span class="label">工数</span>
-        <span class="value">MVP：BE×2・FE×1・QA×1、3〜4ヶ月。Phase2：+2ヶ月。Phase3：+3〜4ヶ月</span>
-      </div>
-      <div class="col-item">
-        <span class="label">依存関係</span>
-        <span class="value">温度帯担当との合同DBスキーマ設計（着手前必須）。残日数計算基準の業務定義確定。Phase3はオーム乳業の2026年8月基幹刷新に合わせる</span>
-      </div>
-    </div>
-  </div>
-  <span class="page-num">07</span>
-</section>
-
-<!-- ============ Slide 8: 優先度スコア ============ -->
-<section class="slide">
-  <h2>優先度スコア</h2>
-  <table class="score">
-    <thead>
-      <tr>
-        <th>評価軸</th>
-        <th>重み</th>
-        <th>評価（1〜5）</th>
-        <th>加重スコア</th>
-        <th>コメント</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>売上インパクト</td>
-        <td>×2</td>
-        <td>4</td>
-        <td>8</td>
-        <td>廃棄ロス削減・訳あり品売上化でGMVに貢献。直接的なCVR向上ではないが食品EC特有の効果が大きい</td>
-      </tr>
-      <tr>
-        <td>ユーザー価値</td>
-        <td>×1</td>
-        <td>5</td>
-        <td>5</td>
-        <td>食品EC事業者の現状最大ペイン。既存機能では代替不可能</td>
-      </tr>
-      <tr>
-        <td>開発コスト</td>
-        <td>×1</td>
-        <td>2</td>
-        <td>2</td>
-        <td>DBスキーマ変更・引当ロジック・マイグレーションが必要で中〜高難度</td>
-      </tr>
-      <tr>
-        <td>戦略整合性</td>
-        <td>×1</td>
-        <td>5</td>
-        <td>5</td>
-        <td>「食品BtoB業務パック」中核機能。ヒアリングレポート重点テーマ2と直結</td>
-      </tr>
-      <tr>
-        <td>利用範囲</td>
-        <td>×1</td>
-        <td>3</td>
-        <td>3</td>
-        <td>食品EC特化だが市場は4兆円規模。戦略的セグメント集中として正当化される</td>
-      </tr>
-      <tr class="total">
-        <td>合計</td>
-        <td>—</td>
-        <td>—</td>
-        <td>23 / 30点</td>
-        <td>優先度：高（15点以上でロードマップ登録推奨）</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="page-num">08</span>
-</section>
-
-<!-- ============ Slide 9: まとめ・推奨判断 ============ -->
-<section class="slide summary">
-  <h2>まとめ・推奨判断</h2>
-  <div class="summary-block">
-    <p class="head">▶ 推奨判断：Go — 開発推進</p>
-    <p>食品EC事業者の現場最大ペインを解消する代替不可能な機能。優先度スコア23点で「優先度：高」。食品BtoB業務パックの中核として開発を推進する。</p>
-  </div>
-  <div class="summary-block">
-    <p class="head">▶ 開発ロードマップ</p>
-    <div class="roadmap">
-      <div class="roadmap-col">
-        <p class="phase-label">MVP · 3〜4ヶ月</p>
-        <p class="phase-title">ロット管理・FEFO引当</p>
-        <ul>
-          <li>ロット登録（手動＋CSV）</li>
-          <li>FEFO自動引当</li>
-          <li>残日数バリデーション</li>
-          <li>アラートメール</li>
-        </ul>
-      </div>
-      <div class="roadmap-col phase2">
-        <p class="phase-label">Phase 2 · +2ヶ月</p>
-        <p class="phase-title">訳あり品・切迫シグナル</p>
-        <ul>
-          <li>訳あり品自動切替</li>
-          <li>管理者承認オプション</li>
-          <li>EC上の切迫シグナル表示</li>
-        </ul>
-      </div>
-      <div class="roadmap-col phase3">
-        <p class="phase-label">Phase 3 · +3〜4ヶ月</p>
-        <p class="phase-title">基幹API同期</p>
-        <ul>
-          <li>基幹システムAPIによる定時連動</li>
-          <li>ロット別出荷レポート</li>
-          <li>オーム乳業基幹刷新（8月）に合わせてリリース</li>
-        </ul>
+      <div class="card-header"><h2>MVP フェーズ — 対応画面</h2></div>
+      <div>
+        <table class="proposal-row">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>画面名</th>
+              <th>種別</th>
+              <th>追加・変更内容</th>
+              <th>このモックで確認</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight: bold;">①</td>
+              <td><strong>商品登録画面</strong></td>
+              <td><span class="chip chip-yellow">既存修正</span></td>
+              <td>
+                ・「ロット・賞味期限管理」セクション追加<br>
+                ・ロット管理 ON/OFF トグル<br>
+                ・出荷可能最低残日数 の設定項目<br>
+                ・バリエーション列に「ロットを管理する」ボタン追加
+              </td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showPage('p1',0)">① を見る</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold;">②</td>
+              <td><strong>ロット管理画面</strong>（新規）</td>
+              <td><span class="chip chip-green">新規作成</span></td>
+              <td>
+                ・ロット一覧（No./賞味期限/残日数/在庫数/引き当てステータス）<br>
+                ・ロット追加フォーム（ロットNo./賞味期限/製造日/入荷日/在庫数）<br>
+                ・ロット編集・削除<br>
+                ・CSV一括登録 / エクスポート
+              </td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showPage('p2',1)">② を見る</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold;">③</td>
+              <td><strong>在庫アラートメール設定</strong></td>
+              <td><span class="chip chip-yellow">既存修正</span></td>
+              <td>
+                ・「賞味期限アラート」セクション追加<br>
+                ・アラート閾値（残日数）の設定<br>
+                ・通知メールのプレビュー表示
+              </td>
+              <td><button class="btn btn-secondary btn-sm" onclick="showPage('p3',2)">③ を見る</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold;">④</td>
+              <td><strong>商品情報一括アップロード（CSV）</strong></td>
+              <td><span class="chip chip-yellow">既存修正</span></td>
+              <td>
+                ・CSVフォーマットにロット列を追加<br>
+                　→ ロットNo. / 賞味期限 / 製造日 / 入荷日 / ロット在庫数<br>
+                ・エラー行・エラー項目の明示バリデーション
+              </td>
+              <td>
+                <span style="font-size: 12px; color: #9ca3af;">スクリーンショット待ち</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Phase 2 以降 — 追加提案</h2></div>
+      <div>
+        <table class="proposal-row">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>画面名</th>
+              <th>種別</th>
+              <th>内容</th>
+              <th>フェーズ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>⑤</td>
+              <td><strong>賞味期限ダッシュボード</strong></td>
+              <td><span class="chip chip-green">新規作成</span></td>
+              <td>全商品横断で賞味期限が近いロットを一覧表示。残日数フィルタ・廃棄予定在庫サマリー</td>
+              <td><span class="phase-p2">Phase 2</span></td>
+            </tr>
+            <tr>
+              <td>⑥</td>
+              <td><strong>訳あり商品切り替え</strong>（在庫処分）</td>
+              <td><span class="chip chip-yellow">既存修正</span></td>
+              <td>廃棄予定ロットをワンクリックで割引販売に切り替えるフロー</td>
+              <td><span class="phase-p2">Phase 2</span></td>
+            </tr>
+            <tr>
+              <td>⑦</td>
+              <td><strong>ショップ側「賞味期限表示」</strong></td>
+              <td><span class="chip chip-yellow">既存修正</span></td>
+              <td>購入者向け商品ページに発送予定ロットの賞味期限（目安）を表示</td>
+              <td><span class="phase-p2">Phase 2</span></td>
+            </tr>
+            <tr>
+              <td>⑧</td>
+              <td><strong>ロット別出荷レポート</strong></td>
+              <td><span class="chip chip-green">新規作成</span></td>
+              <td>どの注文でどのロットが引き当て・出荷されたかを記録・検索</td>
+              <td><span class="phase-p2">Phase 3</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>次のステップ — 追加でほしいスクリーンショット</h2></div>
+      <div class="section" style="padding-top: 16px;">
+        <div class="info-box yellow">
+          <span class="icon">📷</span>
+          <div>
+            <div style="font-weight: bold; margin-bottom: 6px;">以下の画面のスクリーンショットをいただけると、追加モックを作成できます</div>
+            <ul style="margin-left: 16px; font-size: 13px; line-height: 2;">
+              <li><strong>在庫アラートメール設定画面</strong>（現在の構成を確認のうえ、追加セクションの差分を作成）</li>
+              <li><strong>商品情報一括アップロード（CSV取込）画面</strong>（CSVフォーマット拡張のモックを作成）</li>
+              <li><strong>注文管理 › 注文詳細画面</strong>（FEFOで引き当てたロット情報をどこに表示するかを検討）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div class="summary-block">
-    <p class="head">▶ 着手前の必須アクション</p>
-    <ul>
-      <li>① 温度帯担当との合同DBスキーマ設計会議を今すぐ設定</li>
-      <li>② オーム乳業へ「残日数計算基準」と「CSVフォーマット」の追加ヒアリングを今すぐ実施</li>
-      <li>③ 〜2週間：MVP機能要件定義書を作成しTech Leadと技術レビュー</li>
-    </ul>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5: 関係図・フロー図
+     ================================================================ -->
+<div id="p5" class="page">
+
+  <div class="screen-label">
+    <span>📊 関係図・フロー図</span>
+    <span class="type-badge" style="background: rgba(16,185,129,0.3);">説明資料</span>
+    <span style="color:rgba(255,255,255,0.5)">— ロット管理・残日数・FEFO引き当て・アラートの関係を図解</span>
   </div>
-  <span class="page-num">09</span>
-</section>
+
+  <div class="page-header">
+    <h1>ロット管理 — 関係図・フロー図</h1>
+    <div class="breadcrumb">UIモック / 説明資料</div>
+  </div>
+
+  <div class="container">
+
+    <!-- ① データ構造 -->
+    <div class="card">
+      <div class="card-header"><h2>① データ構造：ロットとは</h2></div>
+      <div class="section" style="padding-top:20px;">
+        <div style="display:flex; gap:48px; flex-wrap:wrap; align-items:flex-start;">
+
+          <!-- Tree -->
+          <div style="flex:0 0 auto;">
+            <div style="font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.06em; margin-bottom:14px;">階層構造</div>
+
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:2px;">
+              <div style="background:#eef2ff; border:2px solid #a5b4fc; border-radius:8px; padding:8px 20px; font-weight:700; color:#3730a3; font-size:14px;">🏷 商品</div>
+            </div>
+            <div style="border-left:2px dashed #c7d2fe; margin-left:28px; padding-left:20px; padding-top:6px; padding-bottom:6px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:2px;">
+                <div style="background:#ecfdf5; border:2px solid #6ee7b7; border-radius:8px; padding:8px 20px; font-weight:700; color:#065f46; font-size:14px;">📦 バリエーション（SKU）</div>
+                <span style="font-size:12px; color:#9ca3af;">× 複数</span>
+              </div>
+              <div style="border-left:2px dashed #a7f3d0; margin-left:28px; padding-left:20px; padding-top:6px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="background:#fffbeb; border:2px solid #fcd34d; border-radius:8px; padding:8px 20px; font-weight:700; color:#92400e; font-size:14px;">🔢 ロット</div>
+                  <span style="font-size:12px; color:#9ca3af;">× 複数件</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:18px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:12px 16px; font-size:13px; color:#374151; line-height:2; max-width:320px;">
+              <div style="font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">バリエーション在庫数の計算</div>
+              <div style="text-align:center; font-size:15px; color:#374151;">
+                バリエーション在庫数<br>
+                <span style="font-size:13px; color:#9ca3af;">= </span>
+                <span style="color:#f97316; font-weight:700;">ロットA</span>
+                <span style="color:#9ca3af;"> + </span>
+                <span style="color:#f97316; font-weight:700;">ロットB</span>
+                <span style="color:#9ca3af;"> + </span>
+                <span style="color:#f97316; font-weight:700;">…</span>
+              </div>
+              <div style="font-size:11px; color:#9ca3af; text-align:center; margin-top:4px;">（ロット合計が自動反映。手動編集不可）</div>
+            </div>
+          </div>
+
+          <!-- Lot fields -->
+          <div style="flex:1; min-width:280px;">
+            <div style="font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.06em; margin-bottom:14px;">ロットが持つ情報</div>
+            <div style="border:2px solid #fcd34d; border-radius:10px; overflow:hidden;">
+              <div style="background:#fef3c7; padding:10px 16px; font-weight:700; color:#92400e; font-size:13px; display:flex; align-items:center; gap:8px;">
+                🔢 ロット（例：LOT-2025-001）
+              </div>
+              <table style="width:100%; border-collapse:collapse; background:white;">
+                <tr style="border-bottom:1px solid #fef9c3;">
+                  <td style="padding:9px 14px; font-size:13px; color:#78350f; font-weight:600; width:130px;">ロットNo.</td>
+                  <td style="padding:9px 14px; font-size:13px; color:#374151;">LOT-2025-001</td>
+                  <td style="padding:9px 14px;"><span class="badge-req">必須</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #fef9c3; background:#fffdf5;">
+                  <td style="padding:9px 14px; font-size:13px; color:#78350f; font-weight:600;">賞味期限</td>
+                  <td style="padding:9px 14px; font-size:13px; color:#374151;">2026-03-31</td>
+                  <td style="padding:9px 14px;"><span class="badge-req">必須</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #fef9c3; background:#f0fdf4;">
+                  <td style="padding:9px 14px; font-size:13px; color:#065f46; font-weight:600;">残日数</td>
+                  <td style="padding:9px 14px; font-size:13px; color:#374151;">306日</td>
+                  <td style="padding:9px 14px; font-size:11px; color:#16a34a; font-weight:600;">自動計算</td>
+                </tr>
+                <tr style="border-bottom:1px solid #fef9c3; background:#f0fdf4;">
+                  <td style="padding:9px 14px; font-size:12px; color:#6b7280; padding-left:28px;" colspan="3">= 賞味期限（2026-03-31）− 今日（2026-05-29 の場合 306日）</td>
+                </tr>
+                <tr style="border-bottom:1px solid #fef9c3;">
+                  <td style="padding:9px 14px; font-size:13px; color:#78350f; font-weight:600;">製造日</td>
+                  <td style="padding:9px 14px; font-size:13px; color:#374151;">2025-01-10</td>
+                  <td style="padding:9px 14px;"><span class="badge-opt">任意</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #fef9c3; background:#fffdf5;">
+                  <td style="padding:9px 14px; font-size:13px; color:#78350f; font-weight:600;">入荷日</td>
+                  <td style="padding:9px 14px; font-size:13px; color:#374151;">2025-01-15</td>
+                  <td style="padding:9px 14px;"><span class="badge-opt">任意</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 14px; font-size:13px; color:#78350f; font-weight:600;">ロット在庫数</td>
+                  <td style="padding:9px 14px; font-size:13px; color:#374151;">120個</td>
+                  <td style="padding:9px 14px;"><span class="badge-req">必須</span></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ② 残日数ゾーン -->
+    <div class="card">
+      <div class="card-header">
+        <h2>② 残日数・出荷可能最低残日数・アラート閾値の関係</h2>
+        <span style="font-size:12px; color:#9ca3af;">設定例：出荷可能最低残日数＝10日 ／ アラート閾値＝30日</span>
+      </div>
+      <div class="section" style="padding-top:20px;">
+
+        <!-- Zone bar -->
+        <div style="margin:0 8px 0;">
+          <div style="display:flex; height:52px; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.1);">
+            <div style="flex:0 0 11%; background:#ef4444; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; text-align:center; line-height:1.4; padding:0 4px;">引き当て除外<br>＋アラート</div>
+            <div style="flex:0 0 22%; background:#f97316; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; text-align:center; line-height:1.4; padding:0 4px;">アラート送信<br>引き当て可能</div>
+            <div style="flex:1; background:#22c55e; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:white; letter-spacing:.02em;">通常引き当て</div>
+          </div>
+          <!-- Markers -->
+          <div style="position:relative; height:58px; margin-top:2px;">
+            <div style="position:absolute; left:0%; transform:translateX(0); text-align:left;">
+              <div style="width:2px; height:12px; background:#374151; margin-bottom:3px;"></div>
+              <div style="font-size:11px; color:#374151; font-weight:600; white-space:nowrap;">残0日<br><span style="font-weight:400; color:#9ca3af;">（期限当日）</span></div>
+            </div>
+            <div style="position:absolute; left:11%; transform:translateX(-50%); text-align:center;">
+              <div style="width:2px; height:12px; background:#ef4444; margin:0 auto 3px;"></div>
+              <div style="font-size:11px; font-weight:700; color:#ef4444; white-space:nowrap;">残10日<br>出荷可能最低残日数</div>
+            </div>
+            <div style="position:absolute; left:33%; transform:translateX(-50%); text-align:center;">
+              <div style="width:2px; height:12px; background:#f97316; margin:0 auto 3px;"></div>
+              <div style="font-size:11px; font-weight:700; color:#f97316; white-space:nowrap;">残30日<br>アラート閾値</div>
+            </div>
+            <div style="position:absolute; right:0; text-align:right;">
+              <div style="width:2px; height:12px; background:#9ca3af; margin:0 0 3px auto;"></div>
+              <div style="font-size:11px; color:#9ca3af; white-space:nowrap;">残日数（大）→</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div style="display:flex; gap:20px; flex-wrap:wrap; margin:20px 0 20px; padding:12px 16px; background:#f9fafb; border-radius:8px;">
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px;">
+            <div style="width:14px; height:14px; background:#ef4444; border-radius:3px; flex-shrink:0;"></div>
+            <span>残日数 <strong>&lt; 10日</strong>：引き当て<strong style="color:#ef4444;">除外</strong> ＋ アラートメール送信</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px;">
+            <div style="width:14px; height:14px; background:#f97316; border-radius:3px; flex-shrink:0;"></div>
+            <span>残日数 <strong>10〜30日</strong>：引き当て<strong style="color:#22c55e;">対象</strong> ＋ アラートメール送信</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:7px; font-size:13px;">
+            <div style="width:14px; height:14px; background:#22c55e; border-radius:3px; flex-shrink:0;"></div>
+            <span>残日数 <strong>&gt; 30日</strong>：引き当て<strong style="color:#22c55e;">対象</strong>（アラートなし）</span>
+          </div>
+        </div>
+
+        <!-- Lot examples -->
+        <div style="font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px;">ロット別ステータス例</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:80px; font-size:13px; font-weight:700; color:#374151; flex-shrink:0;">LOT-A</div>
+            <div style="flex:1; background:#f3f4f6; border-radius:6px; height:30px; overflow:hidden;">
+              <div style="width:8%; height:100%; background:#ef4444;"></div>
+            </div>
+            <div style="width:56px; font-size:13px; font-weight:700; color:#ef4444; flex-shrink:0;">残 7日</div>
+            <span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:500; white-space:nowrap; flex-shrink:0;">⛔ 引き当て除外 ＋ アラート</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:80px; font-size:13px; font-weight:700; color:#374151; flex-shrink:0;">LOT-B</div>
+            <div style="flex:1; background:#f3f4f6; border-radius:6px; height:30px; overflow:hidden;">
+              <div style="width:23%; height:100%; background:#f97316;"></div>
+            </div>
+            <div style="width:56px; font-size:13px; font-weight:700; color:#f97316; flex-shrink:0;">残21日</div>
+            <span style="background:#fff7ed; color:#c2410c; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:500; white-space:nowrap; flex-shrink:0;">⚠️ 引き当て可能 ＋ アラート</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:80px; font-size:13px; font-weight:700; color:#374151; flex-shrink:0;">LOT-C</div>
+            <div style="flex:1; background:#f3f4f6; border-radius:6px; height:30px; overflow:hidden;">
+              <div style="width:50%; height:100%; background:#22c55e;"></div>
+            </div>
+            <div style="width:56px; font-size:13px; font-weight:700; color:#16a34a; flex-shrink:0;">残45日</div>
+            <span style="background:#f0fdf4; color:#166534; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:500; white-space:nowrap; flex-shrink:0;">✓ 引き当て可能（通常）</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:80px; font-size:13px; font-weight:700; color:#374151; flex-shrink:0;">LOT-D</div>
+            <div style="flex:1; background:#f3f4f6; border-radius:6px; height:30px; overflow:hidden;">
+              <div style="width:90%; height:100%; background:#22c55e;"></div>
+            </div>
+            <div style="width:56px; font-size:13px; font-weight:700; color:#16a34a; flex-shrink:0;">残180日</div>
+            <span style="background:#f0fdf4; color:#166534; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:500; white-space:nowrap; flex-shrink:0;">✓ 引き当て可能（余裕）</span>
+          </div>
+
+        </div>
+
+        <div class="info-box yellow" style="margin-top:20px;">
+          <span class="icon">💡</span>
+          <span>FEFOでは引き当て可能なロットの中で賞味期限が近い順（LOT-B → LOT-C → LOT-D）に引き当てます。LOT-Aは残日数不足のため自動除外です。</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ③ FEFO引き当てフロー -->
+    <div class="card">
+      <div class="card-header"><h2>③ 注文時のFEFO自動引き当てフロー</h2></div>
+      <div class="section" style="padding-top:20px;">
+        <div style="display:flex; gap:40px; flex-wrap:wrap;">
+
+          <!-- Flow -->
+          <div style="flex:1; min-width:280px; display:flex; flex-direction:column; align-items:center; gap:0;">
+
+            <div style="background:#1e1b4b; color:white; border-radius:24px; padding:10px 28px; font-size:13px; font-weight:700; letter-spacing:.02em;">🛒 注文確定</div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:11px 20px; font-size:13px; color:#1e40af; font-weight:500; text-align:center; width:100%; max-width:380px;">
+              対象バリエーションのロット一覧を取得
+              <div style="font-size:11px; color:#93c5fd; margin-top:3px;">（バリエーションに紐づく全ロット）</div>
+            </div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:11px 20px; font-size:13px; color:#1e40af; font-weight:500; text-align:center; width:100%; max-width:380px;">
+              賞味期限の<strong>近い順</strong>にソート
+              <div style="font-size:11px; color:#93c5fd; margin-top:3px;">First Expired, First Out（FEFO）</div>
+            </div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:11px 20px; font-size:13px; color:#1e40af; font-weight:500; text-align:center; width:100%; max-width:380px;">
+              <strong>出荷可能最低残日数</strong> 以上のロットに絞り込む
+              <div style="font-size:11px; color:#93c5fd; margin-top:3px;">（残日数 &lt; 設定値のロットを自動除外）</div>
+            </div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#fffbeb; border:2px solid #fcd34d; border-radius:8px; padding:11px 20px; font-size:13px; color:#92400e; font-weight:700; text-align:center; width:100%; max-width:380px;">
+              引き当て可能なロットに<br>十分な在庫があるか？
+            </div>
+
+            <!-- Branch -->
+            <div style="display:flex; width:100%; max-width:380px; gap:16px; margin-top:2px;">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="font-size:12px; font-weight:700; color:#16a34a; margin-bottom:6px;">✓ YES</div>
+                <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; padding:10px 12px; font-size:12px; color:#166534; font-weight:500; text-align:center; width:100%;">賞味期限が最も近い<br>ロットから順に引き当て</div>
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="background:#1e1b4b; color:white; border-radius:20px; padding:8px 16px; font-size:12px; font-weight:700; text-align:center;">在庫数更新・注文完了</div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="font-size:12px; font-weight:700; color:#dc2626; margin-bottom:6px;">✗ NO</div>
+                <div style="background:#fef2f2; border:1.5px solid #fca5a5; border-radius:8px; padding:10px 12px; font-size:12px; color:#991b1b; font-weight:500; text-align:center; width:100%;">在庫不足エラー<br>（既存フローに準拠）</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Example -->
+          <div style="flex:0 0 280px;">
+            <div style="font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">具体例：3個の注文が入った場合</div>
+            <div style="border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; font-size:12px;">
+              <div style="background:#f9fafb; padding:9px 14px; font-weight:700; color:#374151; border-bottom:1px solid #e5e7eb;">ロット一覧（FEFO順）</div>
+
+              <div style="padding:10px 14px; border-bottom:1px solid #f3f4f6; background:#fef2f2;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                  <span style="font-weight:700; color:#991b1b;">LOT-A</span>
+                  <span style="background:#fee2e2; color:#991b1b; padding:1px 7px; border-radius:8px; font-size:11px;">除外</span>
+                </div>
+                <div style="color:#6b7280;">賞味期限：2026-01-08（残7日）／ 在庫50個</div>
+                <div style="color:#ef4444; font-size:11px; margin-top:2px;">残7日 &lt; 最低10日 → 引き当て除外</div>
+              </div>
+
+              <div style="padding:10px 14px; border-bottom:1px solid #f3f4f6; background:#f0fdf4; border-left:4px solid #22c55e;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                  <span style="font-weight:700; color:#166534;">LOT-B ← 1番目に引き当て</span>
+                  <span style="background:#dcfce7; color:#166534; padding:1px 7px; border-radius:8px; font-size:11px;">−2個</span>
+                </div>
+                <div style="color:#6b7280;">賞味期限：2026-01-22（残21日）</div>
+                <div style="color:#374151; font-weight:600; margin-top:2px;">在庫 2個 → 0個（残1個を次ロットへ）</div>
+              </div>
+
+              <div style="padding:10px 14px; background:#f0fdf4; border-left:4px solid #22c55e;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                  <span style="font-weight:700; color:#166534;">LOT-C ← 2番目に引き当て</span>
+                  <span style="background:#dcfce7; color:#166534; padding:1px 7px; border-radius:8px; font-size:11px;">−1個</span>
+                </div>
+                <div style="color:#6b7280;">賞味期限：2026-02-15（残45日）</div>
+                <div style="color:#374151; font-weight:600; margin-top:2px;">在庫 120個 → 119個</div>
+              </div>
+            </div>
+            <div style="margin-top:10px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; padding:10px 14px; font-size:13px; color:#166534; font-weight:600; text-align:center;">
+              ✅ LOT-B（2個）＋ LOT-C（1個）＝ 3個 引き当て完了
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ アラートフロー -->
+    <div class="card">
+      <div class="card-header"><h2>④ 賞味期限アラートメール送信フロー（毎日バッチ）</h2></div>
+      <div class="section" style="padding-top:20px;">
+        <div style="display:flex; gap:40px; flex-wrap:wrap;">
+
+          <!-- Flow -->
+          <div style="flex:1; min-width:280px; display:flex; flex-direction:column; align-items:center; gap:0;">
+
+            <div style="background:#1e1b4b; color:white; border-radius:24px; padding:10px 28px; font-size:13px; font-weight:700;">🕐 毎日バッチ実行（深夜）</div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:11px 20px; font-size:13px; color:#1e40af; font-weight:500; text-align:center; width:100%; max-width:380px;">
+              全ロットの残日数を計算
+              <div style="font-size:11px; color:#93c5fd; margin-top:3px;">残日数 ＝ 賞味期限 − 今日</div>
+            </div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:11px 20px; font-size:13px; color:#1e40af; font-weight:500; text-align:center; width:100%; max-width:380px;">
+              残日数 ≦ <strong>アラート閾値</strong> のロットを抽出
+              <div style="font-size:11px; color:#93c5fd; margin-top:3px;">（設定例：30日以下を抽出）</div>
+            </div>
+            <div style="font-size:24px; color:#d1d5db; line-height:1.3; margin:2px 0;">↓</div>
+
+            <div style="background:#fffbeb; border:2px solid #fcd34d; border-radius:8px; padding:11px 20px; font-size:13px; color:#92400e; font-weight:700; text-align:center; width:100%; max-width:380px;">
+              対象ロットが1件以上あるか？
+            </div>
+
+            <div style="display:flex; width:100%; max-width:380px; gap:16px; margin-top:2px;">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="font-size:12px; font-weight:700; color:#16a34a; margin-bottom:6px;">✓ YES</div>
+                <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:10px 12px; font-size:12px; color:#1e40af; font-weight:500; text-align:center; width:100%;">商品名・ロットNo.<br>賞味期限・在庫数を整形</div>
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="background:#1e1b4b; color:white; border-radius:20px; padding:8px 16px; font-size:12px; font-weight:700; text-align:center;">📧 管理者へ<br>アラートメール送信</div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="font-size:12px; font-weight:700; color:#6b7280; margin-bottom:6px;">✗ NO</div>
+                <div style="background:#f9fafb; border:1.5px solid #e5e7eb; border-radius:8px; padding:10px 12px; font-size:12px; color:#4b5563; font-weight:500; text-align:center; width:100%;">対象なし</div>
+                <div style="font-size:22px; color:#d1d5db; line-height:1.3;">↓</div>
+                <div style="background:#374151; color:white; border-radius:20px; padding:8px 16px; font-size:12px; font-weight:700; text-align:center;">処理終了</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Timeline -->
+          <div style="flex:0 0 260px;">
+            <div style="font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">本日のバッチ実行例（閾値30日）</div>
+            <div style="border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; font-size:12px;">
+              <div style="background:#f9fafb; padding:9px 14px; font-weight:700; color:#374151; border-bottom:1px solid #e5e7eb; text-align:center;">
+                📅 今日 バッチ実行
+              </div>
+              <div style="padding:14px;">
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:7px; padding:8px 12px;">
+                    <div style="font-weight:700; color:#166534;">LOT-C：残45日 ✓</div>
+                    <div style="color:#6b7280; font-size:11px; margin-top:2px;">45日 &gt; 30日 → <strong>アラートなし</strong></div>
+                  </div>
+                  <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:7px; padding:8px 12px;">
+                    <div style="font-weight:700; color:#c2410c;">LOT-B：残21日 ⚠️</div>
+                    <div style="color:#6b7280; font-size:11px; margin-top:2px;">21日 ≦ 30日 → <strong style="color:#ea580c;">アラート送信！</strong></div>
+                  </div>
+                  <div style="background:#fef2f2; border:1px solid #fca5a5; border-radius:7px; padding:8px 12px;">
+                    <div style="font-weight:700; color:#991b1b;">LOT-A：残7日 🚨</div>
+                    <div style="color:#6b7280; font-size:11px; margin-top:2px;">7日 ≦ 30日 → <strong style="color:#dc2626;">アラート送信！</strong></div>
+                  </div>
+                </div>
+                <div style="margin-top:14px; padding:10px; background:#eff6ff; border-radius:7px; text-align:center; font-size:12px; color:#1e40af; font-weight:600; line-height:1.7;">
+                  📧 LOT-A・LOT-B を一覧にまとめて<br>管理者へアラートメール送信
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+const pages = ['p1','p2','p3','p4','p5'];
+
+function showPage(id, tabIndex) {
+  pages.forEach(p => document.getElementById(p).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (tabIndex !== null && tabIndex >= 0) tabs[tabIndex].classList.add('active');
+  if (id === 'p2') syncMinDays();
+  window.scrollTo(0, 0);
+}
+
+function syncMinDays() {
+  const v = parseInt(document.getElementById('min-days').value) || 0;
+  const label = document.getElementById('p2-min-days-label');
+  const fefo  = document.getElementById('p2-min-days-fefo');
+
+  // ヘッダー・FEFO注記を更新
+  if (v === 0) {
+    label.textContent = '制限なし';
+    fefo.textContent  = '制限なし（全ロット対象）';
+  } else {
+    label.textContent = v + '日';
+    fefo.textContent  = v + '日未満';
+  }
+
+  // ロット一覧のステータスを再計算
+  const rows = document.querySelectorAll('#lot-tbody tr');
+  let nextAllocRow = null;
+  let minEligibleDays = Infinity;
+
+  rows.forEach(row => {
+    const days = parseInt(row.dataset.days);
+    const chip = row.querySelector('.chip');
+    const daysSpan = row.querySelector('td:nth-child(3) span');
+    const eligible = (v === 0) || (days >= v);
+
+    if (eligible) {
+      chip.className = 'chip chip-green';
+      chip.textContent = '✓ 引き当て可能';
+      daysSpan.className = 'days-ok';
+      if (days < minEligibleDays) {
+        minEligibleDays = days;
+        nextAllocRow = row;
+      }
+    } else {
+      chip.className = 'chip chip-red';
+      chip.textContent = '⛔ 除外（残日数不足）';
+      daysSpan.className = 'days-ng';
+    }
+
+    // 次回引き当て対象ラベルと行ハイライトをリセット
+    row.classList.remove('next-alloc');
+    row.querySelector('.next-alloc-label').style.display = 'none';
+  });
+
+  // 最も残日数が少ない引き当て可能ロットを「次回引き当て対象」にする
+  if (nextAllocRow) {
+    nextAllocRow.classList.add('next-alloc');
+    nextAllocRow.querySelector('.next-alloc-label').style.display = 'block';
+  }
+}
+
+function toggleLot(el) {
+  const fields = document.getElementById('lot-fields');
+  const label = document.getElementById('lot-label');
+  const warning = document.getElementById('lot-warning-banner');
+  const totalLabel = document.getElementById('total-stock-label');
+  const lotRows = document.querySelectorAll('.var-lot-row');
+  const editIcons = document.querySelectorAll('.edit-icon');
+
+  if (el.checked) {
+    fields.classList.remove('dimmed');
+    label.textContent = '有効（ロット管理中）';
+    warning.style.display = 'flex';
+    // バリエーションカードをロットモードに切替
+    document.querySelectorAll('.var-card').forEach(card => {
+      const stock = parseInt(card.dataset.stock) || 0;
+      const lots = parseInt(card.dataset.lots) || 0;
+      // 在庫数表示を切替
+      const stockVal = card.querySelector('.stock-val');
+      if (stockVal) stockVal.style.display = 'none';
+      const editIcon = card.querySelector('.edit-icon');
+      if (editIcon) editIcon.style.display = 'none';
+      // ロット行表示
+      const lotRow = card.querySelector('.var-lot-row');
+      if (lotRow) lotRow.style.display = 'flex';
+    });
+    // 合計在庫数更新
+    const total = Array.from(document.querySelectorAll('.var-card'))
+      .reduce((s, c) => s + (parseInt(c.dataset.stock) || 0), 0);
+    totalLabel.textContent = total + '個（ロット合計）';
+    totalLabel.style.color = '#16a34a';
+  } else {
+    fields.classList.add('dimmed');
+    label.textContent = '有効にする';
+    warning.style.display = 'none';
+    document.querySelectorAll('.var-card').forEach(card => {
+      const stockVal = card.querySelector('.stock-val');
+      if (stockVal) stockVal.style.display = '';
+      const editIcon = card.querySelector('.edit-icon');
+      if (editIcon) editIcon.style.display = '';
+      const lotRow = card.querySelector('.var-lot-row');
+      if (lotRow) lotRow.style.display = 'none';
+    });
+    totalLabel.textContent = '無制限';
+    totalLabel.style.color = '#374151';
+  }
+}
+
+function updateDayHint(el) {
+  const hint = document.getElementById('day-hint');
+  const v = parseInt(el.value);
+  if (!v || v === 0) {
+    hint.textContent = '未設定の場合、残日数による引き当て制限はありません。';
+  } else {
+    hint.textContent = `賞味期限まで ${v} 日未満のロットは注文受付時の引き当てから自動除外されます。`;
+  }
+}
+
+function goToLot() {
+  showPage('p2', 1);
+}
+
+function toggleAddForm() {
+  const f = document.getElementById('add-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+let editingLotNo = null;
+
+function calcDays(expiryStr) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expiry = new Date(expiryStr);
+  expiry.setHours(0, 0, 0, 0);
+  return Math.round((expiry - today) / (1000 * 60 * 60 * 24));
+}
+
+function makeLotRow(no, expiry, mfg, arrival, stock, days, threshold) {
+  const eligible = threshold === 0 || days >= threshold;
+  const chipClass = eligible ? 'chip chip-green' : 'chip chip-red';
+  const chipText  = eligible ? '✓ 引き当て可能' : '⛔ 除外（残日数不足）';
+  const dayClass  = eligible ? 'days-ok' : 'days-ng';
+  const tr = document.createElement('tr');
+  tr.dataset.days = days;
+  tr.innerHTML = `
+    <td>
+      <div style="font-weight:600;">${no}</div>
+      <div class="next-alloc-label" style="display:none;font-size:11px;color:#5b5fc7;margin-top:2px;">← 次回引き当て対象</div>
+    </td>
+    <td>${expiry}</td>
+    <td><span class="${dayClass}">${days}日</span></td>
+    <td>${mfg || '—'}</td>
+    <td>${arrival || '—'}</td>
+    <td>${stock}個</td>
+    <td><span class="${chipClass}">${chipText}</span></td>
+    <td class="btn-group">
+      <button class="btn btn-ghost btn-sm" onclick="editLot('${no}','${expiry}','${mfg}','${arrival}',${stock})">編集</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button>
+    </td>`;
+  return tr;
+}
+
+function saveLot() {
+  const no      = document.getElementById('f-lot-no').value.trim();
+  const expiry  = document.getElementById('f-expiry').value;
+  const mfg     = document.getElementById('f-mfg').value;
+  const arrival = document.getElementById('f-arrival').value;
+  const stock   = parseInt(document.getElementById('f-stock').value);
+
+  if (!no || !expiry || isNaN(stock)) {
+    alert('ロットNo.・賞味期限・ロット在庫数は必須です。');
+    return;
+  }
+
+  const days      = calcDays(expiry);
+  const threshold = parseInt(document.getElementById('min-days').value) || 0;
+  const tbody     = document.getElementById('lot-tbody');
+
+  if (editingLotNo) {
+    // 既存行を更新
+    const rows = tbody.querySelectorAll('tr');
+    for (const row of rows) {
+      if (row.querySelector('td div[style*="font-weight"]')?.textContent === editingLotNo) {
+        const newRow = makeLotRow(no, expiry, mfg, arrival, stock, days, threshold);
+        tbody.replaceChild(newRow, row);
+        break;
+      }
+    }
+  } else {
+    // 新規行を追加
+    tbody.appendChild(makeLotRow(no, expiry, mfg, arrival, stock, days, threshold));
+  }
+
+  resetLotForm();
+  syncMinDays();
+}
+
+function deleteLot(btn) {
+  btn.closest('tr').remove();
+  syncMinDays();
+}
+
+function editLot(no, expiry, mfg, arrival, stock) {
+  editingLotNo = no;
+  document.getElementById('f-lot-no').value  = no;
+  document.getElementById('f-expiry').value  = expiry;
+  document.getElementById('f-mfg').value     = mfg;
+  document.getElementById('f-arrival').value = arrival;
+  document.getElementById('f-stock').value   = stock;
+
+  document.getElementById('lot-form-title').childNodes[0].textContent = 'ロットを修正する ';
+  document.getElementById('lot-form-tag').textContent = '修正フォーム';
+  document.getElementById('lot-form-tag').className   = 'card-tag';
+  document.getElementById('lot-form-submit').textContent = '保存する';
+
+  document.getElementById('add-form').style.display = 'block';
+  document.querySelector('.card.is-new').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetLotForm() {
+  editingLotNo = null;
+  document.getElementById('f-lot-no').value  = '';
+  document.getElementById('f-expiry').value  = '';
+  document.getElementById('f-mfg').value     = '';
+  document.getElementById('f-arrival').value = '';
+  document.getElementById('f-stock').value   = '';
+
+  document.getElementById('lot-form-title').childNodes[0].textContent = 'ロットを追加する ';
+  document.getElementById('lot-form-tag').textContent = '新規追加フォーム';
+  document.getElementById('lot-form-tag').className   = 'card-tag new';
+  document.getElementById('lot-form-submit').textContent = '保存する';
+}
+
+function toggleExpiry(el) { /* unused */ }
+
+function toggleExpiry2(el) {
+  document.getElementById('expiry-fields2').style.display = el.checked ? 'block' : 'none';
+}
+
+// ページ読み込み時に既存行の残日数を今日基準で計算して反映
+document.addEventListener('DOMContentLoaded', function () {
+  const rows = document.querySelectorAll('#lot-tbody tr');
+  rows.forEach(row => {
+    const expiryCell = row.querySelector('td:nth-child(2)');
+    if (!expiryCell) return;
+    const days = calcDays(expiryCell.textContent.trim());
+    row.dataset.days = days;
+    const daysSpan = row.querySelector('td:nth-child(3) span');
+    daysSpan.textContent = days + '日';
+  });
+  // デフォルト閾値0でステータスを初期化
+  const threshold = parseInt(document.getElementById('min-days').value) || 0;
+  if (threshold > 0) syncMinDays();
+  else {
+    // 閾値なしでも残日数に応じたクラスだけ付ける
+    rows.forEach(row => {
+      const days = parseInt(row.dataset.days);
+      const daysSpan = row.querySelector('td:nth-child(3) span');
+      daysSpan.className = days >= 0 ? 'days-ok' : 'days-ng';
+    });
+  }
+});
+</script>
 
 </body>
 </html>
