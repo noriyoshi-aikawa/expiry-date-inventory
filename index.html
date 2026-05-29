@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>賞味期限・ロット在庫管理機能 企画書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-primary:       #2389CA;
+    --color-secondary:     #1568A6;
+    --color-tertiary:      #084D84;
+    --color-white:         #FFFFFF;
+    --color-black:         #1A1A1C;
+    --color-warning:       #F05A25;
+    --color-attention:     #FEFFB8;
+    --color-btn-free:      #F05A25;
+    --color-btn-usually:   #1A1A1C;
+    --color-text-primary:  #1A1A1C;
+    --color-text-secondary:#C1C0C6;
+    --color-text-link:     #2389CA;
+    --color-border:        #D5D5D9;
+    --color-table-alt:     #F5F5F5;
+    --color-heading-bg:    #E9F3FA;
+    --color-blue-10:       #E9F3FA;
+    --color-blue-5:        #F4F9FC;
+    --color-grey-5:        #F4F4F4;
+    --font-ja: 'Noto Sans JP', 'メイリオ', sans-serif;
+    --font-en: 'Outfit', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-ja);
+    background: #EFEFEF;
+    color: var(--color-text-primary);
+    line-height: 1.75;
+    letter-spacing: 0.04em;
+  }
+  .slide {
+    width: 960px;
+    min-height: 540px;
+    margin: 40px auto;
+    background: var(--color-white);
+    padding: 56px 64px;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+  /* 表紙 */
+  .slide.cover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 540px;
+  }
+  .cover .eyebrow {
+    font-family: var(--font-en);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 20px;
+  }
+  .cover h1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+  .cover .subtitle {
+    font-size: 18px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+  .cover .date {
+    font-family: var(--font-en);
+    font-size: 15px;
+    opacity: 0.7;
+    margin-top: 32px;
+  }
+  .cover .badge {
+    display: inline-block;
+    margin-top: 24px;
+    background: var(--color-warning);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+  }
+  /* まとめ */
+  .slide.summary {
+    background: var(--color-tertiary);
+    color: var(--color-white);
+  }
+  .summary h2 { color: var(--color-white); }
+  /* 見出し */
+  .slide h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.5;
+    margin-bottom: 28px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--color-primary);
+  }
+  .slide h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-black);
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .slide h3:first-of-type { margin-top: 0; }
+  /* 箇条書き */
+  ul.bullets { padding-left: 0; list-style: none; }
+  ul.bullets li {
+    font-size: 17px;
+    line-height: 1.75;
+    padding: 10px 0 10px 28px;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+  }
+  ul.bullets li:last-child { border-bottom: none; }
+  ul.bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+  ul.bullets li strong { color: var(--color-primary); }
+  /* カードグリッド */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .card {
+    background: var(--color-blue-10);
+    padding: 24px;
+    border-top: 4px solid var(--color-primary);
+  }
+  .card h3 {
+    color: var(--color-primary);
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  .card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+  }
+  .card .purpose {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-warning);
+    font-weight: 500;
+    font-size: 15px;
+  }
+  /* 2カラム */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  .col-item {
+    background: var(--color-blue-5);
+    padding: 14px 18px;
+    border-left: 4px solid var(--color-primary);
+    margin-bottom: 12px;
+  }
+  .col-item .label {
+    display: block;
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .col-item .value {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--color-text-primary);
+  }
+  /* スコアテーブル */
+  table.score {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  table.score th {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+  }
+  table.score td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+  table.score tr:nth-child(even) td { background: var(--color-table-alt); }
+  table.score tr.total td {
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 700;
+  }
+  /* ページ番号 */
+  .page-num {
+    position: absolute;
+    bottom: 28px;
+    right: 40px;
+    font-family: var(--font-en);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+  .cover .page-num, .summary .page-num {
+    color: var(--color-white);
+    opacity: 0.6;
+  }
+  /* まとめスライド用 */
+  .summary-block {
+    margin-bottom: 28px;
+  }
+  .summary-block .head {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-attention);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .summary-block p, .summary-block li {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .summary-block ul { padding-left: 20px; }
+  .summary-block li { margin-bottom: 6px; }
+  /* ロードマップ */
+  .roadmap {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .roadmap-col {
+    border-top: 4px solid var(--color-primary);
+    padding: 16px;
+    background: var(--color-blue-5);
+  }
+  .roadmap-col.phase2 { border-color: var(--color-secondary); }
+  .roadmap-col.phase3 { border-color: var(--color-tertiary); }
+  .roadmap-col .phase-label {
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+    margin-bottom: 6px;
+  }
+  .roadmap-col.phase2 .phase-label { color: var(--color-secondary); }
+  .roadmap-col.phase3 .phase-label { color: var(--color-tertiary); }
+  .roadmap-col .phase-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--color-black);
+  }
+  .roadmap-col ul {
+    padding-left: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+  }
+  /* 印刷 */
+  @media print {
+    body { background: var(--color-white); }
+    .slide {
+      min-height: 100vh;
+      page-break-after: always;
+      box-shadow: none;
+      margin: 0;
+      width: 100%;
+    }
+    .slide:last-child { page-break-after: auto; }
+  }
+  /* スマホ */
+  @media (max-width: 768px) {
+    .slide { width: 100%; padding: 40px 24px; }
+    .slide h2 { font-size: 22px; }
+    .card-grid, .two-col, .roadmap { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Slide 1: 表紙 ============ -->
+<section class="slide cover">
+  <p class="eyebrow">Product Proposal · 食品EC強化</p>
+  <h1>賞味期限・ロット<br>在庫管理機能</h1>
+  <p class="subtitle">食品BtoB業務パック 中核機能</p>
+  <span class="badge">優先度スコア 23 / 30点　→　優先度：高</span>
+  <p class="date">2026年5月　AIプロダクトチーム</p>
+  <span class="page-num">01</span>
+</section>
+
+<!-- ============ Slide 2: 背景と課題 ============ -->
+<section class="slide">
+  <h2>背景と課題</h2>
+  <ul class="bullets">
+    <li><strong>現在の在庫管理は「数量」のみ：</strong>makeshopの在庫管理は数量だけで管理されており、食品ECに不可欠な「時間軸（賞味期限・ロット）」の概念が存在しない</li>
+    <li><strong>現場は目視・記憶・手作業：</strong>オーム乳業（生クリーム・賞味期限20日）では「出荷最低残8日」ルールをEC上で強制できず、出荷前日に倉庫担当が実在庫を目視でロット当て直している。担当者が変われば即崩壊する</li>
+    <li><strong>廃棄ロスと機会損失が同時に発生：</strong>期限管理ができないため、廃棄予定在庫の訳あり品化・割引販売への切り替えが手動対応のみ。売上化できる在庫を捨てている</li>
+    <li><strong>食品EC市場は4兆円規模で成長中：</strong>BtoB・製造直販・D2C食品事業者はShopifyの食品商習慣非対応に課題を感じており、国産カートへの回帰ニーズが存在する。差別化の核心になる</li>
+    <li><strong>「食品BtoB業務パック」の中核機能：</strong>ヒアリング5社中3社（オーム乳業・エスポア・王子サーモン）が賞味期限管理を最優先・高優先と評価</li>
+  </ul>
+  <span class="page-num">02</span>
+</section>
+
+<!-- ============ Slide 3: 解決する問題 ============ -->
+<section class="slide">
+  <h2>解決する問題</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h3>対象ユーザー</h3>
+      <p>食品EC運用担当者・EC事業責任者（中小〜中堅食品メーカー）。年商5〜10億の地方食品メーカー。BtoB卸取引を併用する製造直販・D2C事業者</p>
+      <p class="purpose">▶ オーム乳業・エスポア・王子サーモンが想定主要顧客</p>
+    </div>
+    <div class="card">
+      <h3>課題</h3>
+      <p>賞味期限管理が「在庫数」だけでは制御できず、出荷可否判断が担当者の目視・記憶に完全依存している</p>
+      <p class="purpose">▶ 担当者属人化→退職リスク・引き継ぎ困難</p>
+    </div>
+    <div class="card">
+      <h3>現状の問題</h3>
+      <p>EC上に賞味期限情報がないためFEFO（期限近い順の先入先出）が実現できず、残日数基準以下の誤出荷を防ぐ仕組みもない</p>
+      <p class="purpose">▶ 既存機能では代替不可能な領域</p>
+    </div>
+    <div class="card">
+      <h3>影響</h3>
+      <p>誤出荷によるクレーム・返品・信頼損失。廃棄ロスによる加盟店GMVの機会損失。運用崩壊リスク</p>
+      <p class="purpose">▶ 解消で廃棄コスト削減＋GMV向上を実現</p>
+    </div>
+  </div>
+  <span class="page-num">03</span>
+</section>
+
+<!-- ============ Slide 4: 機能概要 ============ -->
+<section class="slide">
+  <h2>機能概要（MVP スコープ）</h2>
+  <div class="two-col">
+    <div>
+      <div class="col-item">
+        <span class="label">機能① ロット登録</span>
+        <span class="value">商品バリエーション単位に賞味期限・製造日・入荷日・ロット在庫数を登録。手動入力と商品情報一括アップロードCSVの両対応（CSVはMVPに含む）</span>
+        <span class="value" style="display:block; margin-top:8px; padding-top:8px; border-top:1px solid var(--color-border); font-size:13px; color:var(--color-pattern-60);">※「ロット」とは同じ条件で製造・入荷された商品のひとまとまりのこと。同じ商品でも製造日が異なれば賞味期限が異なるため、ロット単位で在庫を管理することで「期限が近いものから出荷する（FEFO）」制御が初めて可能になる。</span>
+      </div>
+      <div class="col-item">
+        <span class="label">機能② FEFO自動引当</span>
+        <span class="value">注文受付時に賞味期限が近い順のロットから自動引当。複数ロットにまたがる場合もトランザクション管理で整合性を担保</span>
+        <span class="value" style="display:block; margin-top:8px; padding-top:8px; border-top:1px solid var(--color-border); font-size:13px; color:var(--color-pattern-60);">※「FEFO（First Expired, First Out）」とは「期限が近いものから先に出荷する」方式のこと。賞味期限が古いロットを優先して出荷することで、期限切れ廃棄を最小化する。一般的な倉庫管理のFIFO（先入れ先出し）の食品特化版にあたる。</span>
+      </div>
+      <div class="col-item">
+        <span class="label">機能③ 残日数バリデーション</span>
+        <span class="value">商品ごとに出荷可能な最低残日数（例：残8日以上）を設定。基準を下回るロットを引当対象から自動除外し、誤出荷を防止</span>
+      </div>
+    </div>
+    <div>
+      <div class="col-item">
+        <span class="label">機能④ アラートメール</span>
+        <span class="value">設定した残日数閾値を下回ったロットが発生した場合に管理者へ自動送信（日次バッチ）。既存在庫アラート機能を流用・拡張</span>
+      </div>
+      <div class="col-item">
+        <span class="label">機能⑤ 訳あり品自動切替（Phase2）</span>
+        <span class="value">期限切迫在庫を設定閾値で自動的に訳あり品へ切り替え（価格・ラベル変更）。ブランドリスク対策として管理者承認オプション付き</span>
+      </div>
+      <div class="col-item">
+        <span class="label">機能⑥ 基幹API同期（Phase3）</span>
+        <span class="value">基幹システムとのAPIによるロット情報の定時連動。手動入力を不要にし、2026年8月のオーム乳業基幹刷新に合わせてリリース</span>
+      </div>
+    </div>
+  </div>
+  <span class="page-num">04</span>
+</section>
+
+<!-- ============ Slide 5: 提供価値 ============ -->
+<section class="slide">
+  <h2>提供価値</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h3>UX・業務効率</h3>
+      <p>出荷前の目視ロット確認作業をゼロへ。倉庫担当者の「出荷前日のロット手動当て直し」業務を半自動化。商品情報一括アップロードCSVで入荷時の登録負荷を最小化</p>
+    </div>
+    <div class="card">
+      <h3>売上・GMV向上</h3>
+      <p>廃棄予定在庫を訳あり品として割引販売（Phase2）することで、捨てていた在庫を売上に転換。加盟店GMVを向上。フードロス削減のPR効果も獲得</p>
+    </div>
+    <div class="card">
+      <h3>競争優位性</h3>
+      <p>Shopifyにはネイティブなロット・FEFO管理機能がなく、日本の食品商習慣（残日数N日以上ルール）に特化した国産カートとしての差別化が明確になる</p>
+    </div>
+    <div class="card">
+      <h3>リスク低減</h3>
+      <p>出荷最低残日数の強制バリデーションで誤出荷クレームを防止。担当者属人化運用を排除し、業務継続性を担保。CSサポート問い合わせの削減</p>
+    </div>
+  </div>
+  <span class="page-num">05</span>
+</section>
+
+<!-- ============ Slide 6: KPI・成功指標 ============ -->
+<section class="slide">
+  <h2>KPI・成功指標</h2>
+  <h3>定量指標（KPI）</h3>
+  <ul class="bullets">
+    <li><strong>機能利用率：</strong>食品EC加盟店のうち本機能を有効化している割合。目標：食品EC加盟店の30%以上（リリース後12ヶ月以内）</li>
+    <li><strong>GMV成長率：</strong>食品EC加盟店のGMV前年比成長率。訳あり品売上転換による廃棄ロス削減効果の数値化（Phase2以降）</li>
+    <li><strong>誤出荷クレーム削減：</strong>賞味期限関連の誤出荷クレーム件数をゼロへ。CSサポート問い合わせ50%削減（リリース後6ヶ月以内）</li>
+    <li><strong>新規加盟店獲得：</strong>食品ECカテゴリの新規加盟店数。「賞味期限管理」機能を選定理由に挙げた件数を追跡</li>
+  </ul>
+  <h3>成功指標</h3>
+  <ul class="bullets">
+    <li>ヒアリング対象企業（オーム乳業等）におけるMVP後3ヶ月以内の継続利用確認</li>
+    <li>MVPの商品情報一括アップロードCSV継続率：機能登録後1ヶ月時点で70%以上が継続使用</li>
+    <li>Phase2（訳あり品切替）リリース後の廃棄ロス削減額を加盟店にレポーティングできること</li>
+  </ul>
+  <span class="page-num">06</span>
+</section>
+
+<!-- ============ Slide 7: リスクと対策 ============ -->
+<section class="slide">
+  <h2>リスクと対策</h2>
+  <div class="two-col">
+    <div>
+      <h3>想定リスク</h3>
+      <div class="col-item">
+        <span class="label">技術リスク</span>
+        <span class="value">DBスキーマへのロットテーブル追加により全加盟店の在庫データへのマイグレーションが必要。同時注文時のRace Condition対策が必要。温度帯担当との統合コスト増大リスク</span>
+      </div>
+      <div class="col-item">
+        <span class="label">運用リスク</span>
+        <span class="value">基幹連携がないMVP段階では手動入力が必要で継続利用率が低下するリスク。→ 商品情報一括アップロードCSVをMVPに含めることで緩和</span>
+      </div>
+      <div class="col-item">
+        <span class="label">ビジネスリスク</span>
+        <span class="value">訳あり品自動切替が贈答品中心の加盟店（王子サーモン等）に受け入れられないリスク。→ Phase2で管理者承認オプションを設計して対処</span>
+      </div>
+    </div>
+    <div>
+      <h3>開発観点</h3>
+      <div class="col-item">
+        <span class="label">難易度</span>
+        <span class="value">中〜高。DBスキーマ変更と既存在庫との整合性担保が最大の技術難度。FEFO引当のトランザクション設計が必要</span>
+      </div>
+      <div class="col-item">
+        <span class="label">工数</span>
+        <span class="value">MVP：BE×2・FE×1・QA×1、3〜4ヶ月。Phase2：+2ヶ月。Phase3：+3〜4ヶ月</span>
+      </div>
+      <div class="col-item">
+        <span class="label">依存関係</span>
+        <span class="value">温度帯担当との合同DBスキーマ設計（着手前必須）。残日数計算基準の業務定義確定。Phase3はオーム乳業の2026年8月基幹刷新に合わせる</span>
+      </div>
+    </div>
+  </div>
+  <span class="page-num">07</span>
+</section>
+
+<!-- ============ Slide 8: 優先度スコア ============ -->
+<section class="slide">
+  <h2>優先度スコア</h2>
+  <table class="score">
+    <thead>
+      <tr>
+        <th>評価軸</th>
+        <th>重み</th>
+        <th>評価（1〜5）</th>
+        <th>加重スコア</th>
+        <th>コメント</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>売上インパクト</td>
+        <td>×2</td>
+        <td>4</td>
+        <td>8</td>
+        <td>廃棄ロス削減・訳あり品売上化でGMVに貢献。直接的なCVR向上ではないが食品EC特有の効果が大きい</td>
+      </tr>
+      <tr>
+        <td>ユーザー価値</td>
+        <td>×1</td>
+        <td>5</td>
+        <td>5</td>
+        <td>食品EC事業者の現状最大ペイン。既存機能では代替不可能</td>
+      </tr>
+      <tr>
+        <td>開発コスト</td>
+        <td>×1</td>
+        <td>2</td>
+        <td>2</td>
+        <td>DBスキーマ変更・引当ロジック・マイグレーションが必要で中〜高難度</td>
+      </tr>
+      <tr>
+        <td>戦略整合性</td>
+        <td>×1</td>
+        <td>5</td>
+        <td>5</td>
+        <td>「食品BtoB業務パック」中核機能。ヒアリングレポート重点テーマ2と直結</td>
+      </tr>
+      <tr>
+        <td>利用範囲</td>
+        <td>×1</td>
+        <td>3</td>
+        <td>3</td>
+        <td>食品EC特化だが市場は4兆円規模。戦略的セグメント集中として正当化される</td>
+      </tr>
+      <tr class="total">
+        <td>合計</td>
+        <td>—</td>
+        <td>—</td>
+        <td>23 / 30点</td>
+        <td>優先度：高（15点以上でロードマップ登録推奨）</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="page-num">08</span>
+</section>
+
+<!-- ============ Slide 9: まとめ・推奨判断 ============ -->
+<section class="slide summary">
+  <h2>まとめ・推奨判断</h2>
+  <div class="summary-block">
+    <p class="head">▶ 推奨判断：Go — 開発推進</p>
+    <p>食品EC事業者の現場最大ペインを解消する代替不可能な機能。優先度スコア23点で「優先度：高」。食品BtoB業務パックの中核として開発を推進する。</p>
+  </div>
+  <div class="summary-block">
+    <p class="head">▶ 開発ロードマップ</p>
+    <div class="roadmap">
+      <div class="roadmap-col">
+        <p class="phase-label">MVP · 3〜4ヶ月</p>
+        <p class="phase-title">ロット管理・FEFO引当</p>
+        <ul>
+          <li>ロット登録（手動＋CSV）</li>
+          <li>FEFO自動引当</li>
+          <li>残日数バリデーション</li>
+          <li>アラートメール</li>
+        </ul>
+      </div>
+      <div class="roadmap-col phase2">
+        <p class="phase-label">Phase 2 · +2ヶ月</p>
+        <p class="phase-title">訳あり品・切迫シグナル</p>
+        <ul>
+          <li>訳あり品自動切替</li>
+          <li>管理者承認オプション</li>
+          <li>EC上の切迫シグナル表示</li>
+        </ul>
+      </div>
+      <div class="roadmap-col phase3">
+        <p class="phase-label">Phase 3 · +3〜4ヶ月</p>
+        <p class="phase-title">基幹API同期</p>
+        <ul>
+          <li>基幹システムAPIによる定時連動</li>
+          <li>ロット別出荷レポート</li>
+          <li>オーム乳業基幹刷新（8月）に合わせてリリース</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="summary-block">
+    <p class="head">▶ 着手前の必須アクション</p>
+    <ul>
+      <li>① 温度帯担当との合同DBスキーマ設計会議を今すぐ設定</li>
+      <li>② オーム乳業へ「残日数計算基準」と「CSVフォーマット」の追加ヒアリングを今すぐ実施</li>
+      <li>③ 〜2週間：MVP機能要件定義書を作成しTech Leadと技術レビュー</li>
+    </ul>
+  </div>
+  <span class="page-num">09</span>
+</section>
+
+</body>
+</html>
