@@ -1838,16 +1838,29 @@ tbody tr:hover td { background: #fafafa; }
 
 <script>
 const pages = ['p1','p2','p3','p4','p5','p6','p7'];
+const pageTabIndex = {p1:0, p2:1, p3:2, p6:3, p7:4, p4:5, p5:6};
 
 function showPage(id, tabIndex) {
   pages.forEach(p => document.getElementById(p).classList.remove('active'));
   document.getElementById(id).classList.add('active');
   const tabs = document.querySelectorAll('.nav-tab');
   tabs.forEach(t => t.classList.remove('active'));
-  if (tabIndex !== null && tabIndex >= 0) tabs[tabIndex].classList.add('active');
+  const idx = (tabIndex !== null && tabIndex >= 0) ? tabIndex : pageTabIndex[id];
+  if (idx >= 0) tabs[idx].classList.add('active');
   if (id === 'p2') syncMinDays();
+  history.pushState(null, '', '#' + id);
   window.scrollTo(0, 0);
 }
+
+// ハッシュからタブを復元
+function loadFromHash() {
+  const hash = location.hash.replace('#', '');
+  if (hash && pages.includes(hash)) {
+    showPage(hash, pageTabIndex[hash]);
+  }
+}
+window.addEventListener('popstate', loadFromHash);
+window.addEventListener('DOMContentLoaded', loadFromHash);
 
 function syncMinDays() {
   const v = parseInt(document.getElementById('min-days').value) || 0;
