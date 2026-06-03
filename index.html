@@ -1589,6 +1589,119 @@ tbody tr:hover td { background: #fafafa; }
       </div>
     </div>
 
+    <!-- ⑤ お届け希望日を考慮したロット引き当て制御 -->
+    <div class="card">
+      <div class="card-header"><h2>⑤ お届け希望日を考慮したロット引き当て制御</h2></div>
+      <div class="section" style="padding-top:20px;">
+
+        <!-- ▼課題 -->
+        <div style="border-left:4px solid #f97316; background:#fff7ed; border-radius:0 8px 8px 0; padding:16px 20px; margin-bottom:20px;">
+          <div style="font-size:14px; font-weight:700; color:#c2410c; margin-bottom:8px;">▼ 課題</div>
+          <div style="font-size:13px; color:#374151; line-height:1.8;">
+            お客様が<strong>2週間後にお届け</strong>の注文を受けた場合、どのロットから在庫を引き当てるべきか。<br>
+            注文時点では出荷可能なロットでも、<strong>お届け日には残日数が不足してしまう</strong>ケースを防ぐ必要があります。
+          </div>
+        </div>
+
+        <!-- ▼解決策 -->
+        <div style="border-left:4px solid #16a34a; background:#f0fdf4; border-radius:0 8px 8px 0; padding:16px 20px; margin-bottom:24px;">
+          <div style="font-size:14px; font-weight:700; color:#15803d; margin-bottom:8px;">▼ 解決策</div>
+          <div style="font-size:13px; color:#374151; line-height:1.8;">
+            お届け希望日を選択した日付が、現在引き当て対象のロットの「<strong>出荷可能最低残日数</strong>」より<strong>手前</strong>であればそのまま引き当て、<strong>後ろ</strong>であれば、その次の消費期限が近いロットから引き当てるように制御する。
+          </div>
+        </div>
+
+        <!-- 判定ルール -->
+        <div style="background:#fffbeb; border:2px solid #fcd34d; border-radius:10px; padding:18px 22px; margin-bottom:28px;">
+          <div style="font-size:13px; font-weight:700; color:#92400e; margin-bottom:12px;">⚖️ 判定ルール</div>
+          <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:stretch;">
+            <div style="flex:1; min-width:240px; background:white; border:1.5px solid #86efac; border-radius:8px; padding:14px 16px;">
+              <div style="font-weight:700; color:#166534; font-size:13px; margin-bottom:6px;">✓ お届け希望日が「手前」</div>
+              <div style="font-size:12px; color:#374151; line-height:1.7;">お届け希望日が、そのロットの出荷可能最低残日数を割り込む日<strong>より手前</strong>であれば、<strong>そのまま引き当て</strong>る。</div>
+            </div>
+            <div style="flex:1; min-width:240px; background:white; border:1.5px solid #fca5a5; border-radius:8px; padding:14px 16px;">
+              <div style="font-weight:700; color:#991b1b; font-size:13px; margin-bottom:6px;">✗ お届け希望日が「後ろ」</div>
+              <div style="font-size:12px; color:#374151; line-height:1.7;">割り込む日<strong>より後ろ</strong>であれば、そのロットはスキップし、<strong>次に賞味期限が近いロット</strong>から引き当てる。</div>
+            </div>
+          </div>
+          <div style="margin-top:14px; text-align:center; font-size:13px; color:#92400e; background:#fef9c3; border-radius:7px; padding:9px;">
+            🔑 各ロットの<strong>出荷可能な最終日</strong> ＝ 賞味期限 − 出荷可能最低残日数
+          </div>
+        </div>
+
+        <!-- タイムライン図 -->
+        <div style="font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:16px;">具体例：今日 2026-06-01／お届け希望日 2026-06-15（2週間後）／出荷可能最低残日数 10日</div>
+
+        <div style="display:flex; gap:32px; flex-wrap:wrap;">
+
+          <!-- 左：タイムライン -->
+          <div style="flex:1; min-width:340px;">
+
+            <!-- LOT-A（スキップ） -->
+            <div style="margin-bottom:26px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; color:#991b1b; font-size:14px;">LOT-A（賞味期限が最も近い）</span>
+                <span style="background:#fee2e2; color:#991b1b; padding:2px 10px; border-radius:10px; font-size:12px; font-weight:600;">⛔ スキップ</span>
+              </div>
+              <div style="position:relative; height:54px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px;">
+                <!-- 賞味期限まで帯 -->
+                <div style="position:absolute; left:0; top:0; bottom:0; width:62%; background:linear-gradient(90deg,#dcfce7,#fef9c3); border-radius:8px 0 0 8px;"></div>
+                <!-- 最低残日数ゾーン（危険） -->
+                <div style="position:absolute; left:62%; top:0; bottom:0; width:38%; background:repeating-linear-gradient(45deg,#fee2e2,#fee2e2 6px,#fecaca 6px,#fecaca 12px); border-radius:0 8px 8px 0;"></div>
+                <!-- 出荷可能な最終日ライン -->
+                <div style="position:absolute; left:62%; top:-6px; bottom:-6px; border-left:2px dashed #d97706;"></div>
+                <div style="position:absolute; left:62%; top:-22px; transform:translateX(-50%); font-size:10px; color:#d97706; font-weight:700; white-space:nowrap;">出荷可能な最終日 6/10</div>
+                <!-- お届け希望日マーカー -->
+                <div style="position:absolute; left:78%; top:-6px; bottom:-6px; border-left:2px solid #1e1b4b;"></div>
+                <div style="position:absolute; left:78%; bottom:-24px; transform:translateX(-50%); font-size:10px; color:#1e1b4b; font-weight:700; white-space:nowrap;">📦 お届け 6/15</div>
+                <!-- 賞味期限ラベル -->
+                <div style="position:absolute; right:6px; top:50%; transform:translateY(-50%); font-size:10px; color:#92400e; font-weight:600;">賞味期限 6/20</div>
+              </div>
+              <div style="margin-top:18px; font-size:12px; color:#991b1b;">お届け日 6/15 は最終日 6/10 <strong>より後ろ</strong> → 配達時点で残5日（&lt;10日）→ <strong>引き当て不可</strong></div>
+            </div>
+
+            <!-- LOT-B（引き当て） -->
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; color:#166534; font-size:14px;">LOT-B（次に賞味期限が近い）</span>
+                <span style="background:#dcfce7; color:#166534; padding:2px 10px; border-radius:10px; font-size:12px; font-weight:600;">✓ 引き当て</span>
+              </div>
+              <div style="position:relative; height:54px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px;">
+                <div style="position:absolute; left:0; top:0; bottom:0; width:82%; background:linear-gradient(90deg,#dcfce7,#bbf7d0); border-radius:8px 0 0 8px;"></div>
+                <div style="position:absolute; left:82%; top:0; bottom:0; width:18%; background:repeating-linear-gradient(45deg,#fee2e2,#fee2e2 6px,#fecaca 6px,#fecaca 12px); border-radius:0 8px 8px 0;"></div>
+                <div style="position:absolute; left:82%; top:-6px; bottom:-6px; border-left:2px dashed #d97706;"></div>
+                <div style="position:absolute; left:82%; top:-22px; transform:translateX(-50%); font-size:10px; color:#d97706; font-weight:700; white-space:nowrap;">出荷可能な最終日 6/30</div>
+                <div style="position:absolute; left:40%; top:-6px; bottom:-6px; border-left:2px solid #1e1b4b;"></div>
+                <div style="position:absolute; left:40%; bottom:-24px; transform:translateX(-50%); font-size:10px; color:#1e1b4b; font-weight:700; white-space:nowrap;">📦 お届け 6/15</div>
+                <div style="position:absolute; right:6px; top:50%; transform:translateY(-50%); font-size:10px; color:#92400e; font-weight:600;">賞味期限 7/10</div>
+              </div>
+              <div style="margin-top:18px; font-size:12px; color:#166534;">お届け日 6/15 は最終日 6/30 <strong>より手前</strong> → 配達時点で残25日（≧10日）→ <strong>このロットから引き当て ✓</strong></div>
+            </div>
+
+          </div>
+
+          <!-- 右：結論 -->
+          <div style="flex:0 0 260px;">
+            <div style="font-size:11px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">引き当て結果</div>
+            <div style="border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; font-size:12px;">
+              <div style="padding:12px 14px; border-bottom:1px solid #f3f4f6; background:#fef2f2;">
+                <div style="font-weight:700; color:#991b1b; margin-bottom:3px;">LOT-A → スキップ</div>
+                <div style="color:#6b7280;">通常のFEFOでは1番目だが、お届け日に残日数不足のため除外</div>
+              </div>
+              <div style="padding:12px 14px; background:#f0fdf4; border-left:4px solid #22c55e;">
+                <div style="font-weight:700; color:#166534; margin-bottom:3px;">LOT-B → 引き当て</div>
+                <div style="color:#6b7280;">お届け日でも残日数を満たすため、ここから引き当て</div>
+              </div>
+            </div>
+            <div style="margin-top:14px; background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; padding:12px 14px; font-size:12px; color:#1e40af; line-height:1.7;">
+              💡 お届け希望日を起点に逆算することで、<strong>お客様の手元に届いた時点で十分な賞味期限が残っている</strong>ロットだけを引き当てます。
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
