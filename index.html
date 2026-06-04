@@ -96,6 +96,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Yu Gothic UI", "Hiragino
 .btn-danger:hover { background: #fef2f2; }
 .btn-outlet { background: white; color: #d97706; border: 1px solid #d97706; }
 .btn-outlet:hover { background: #fffbeb; }
+.pt-btn { background: transparent; color: rgba(255,255,255,0.75); border: none; padding: 6px 16px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.15s; }
+.pt-btn.pt-active { background: #fff; color: #1e1b4b; font-weight: 700; }
 .btn-sm { padding: 5px 12px; font-size: 12px; }
 .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
 .btn-group { display: flex; gap: 8px; }
@@ -249,6 +251,17 @@ tbody tr:hover td { background: #fafafa; }
 
   <div class="container">
 
+    <!-- 🔧 デモ専用：商品タイプ切替（実画面には表示されない） -->
+    <div style="background:#1e1b4b; color:#fff; border-radius:8px; padding:11px 16px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:13px;">
+      <span style="font-weight:700;">🔧 デモ切替</span>
+      <span style="opacity:.8;">商品タイプ：</span>
+      <div style="display:flex; border:1px solid rgba(255,255,255,.3); border-radius:6px; overflow:hidden;">
+        <button id="pt-sku" class="pt-btn pt-active" onclick="setProductType('sku')">SKU有り商品</button>
+        <button id="pt-single" class="pt-btn" onclick="setProductType('single')">SKU無し商品</button>
+      </div>
+      <span style="opacity:.55; font-size:12px;">※ 説明用の切替。実際の登録画面には表示されません。上の「ロット管理」を有効にして挙動を確認してください。</span>
+    </div>
+
     <!-- 数量情報（既存・参考） -->
     <div class="card">
       <div class="card-header">
@@ -258,9 +271,16 @@ tbody tr:hover td { background: #fafafa; }
         <div class="form-row">
           <div class="form-label">在庫数 <span class="help">?</span></div>
           <div class="form-control">
-            <div class="toggle-wrap">
+            <div class="toggle-wrap" id="stock-normal">
               <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
               <span class="toggle-label">設定する</span>
+            </div>
+            <!-- SKU無し＋ロット管理ON時に表示（案A：在庫数欄に集約） -->
+            <div id="stock-lot-managed" style="display:none; align-items:center; gap:14px; flex-wrap:wrap;">
+              <span style="display:inline-flex; align-items:center; gap:6px; background:#f0fdf4; border:1px solid #86efac; color:#166534; border-radius:6px; padding:6px 12px; font-size:13px; font-weight:600;">📦 ロット管理中</span>
+              <span style="font-size:13px; color:#374151;">合計 <strong>320個</strong>／<strong>3ロット</strong>登録済み</span>
+              <button class="btn btn-secondary btn-sm" onclick="goToLot()">ロットを管理する →</button>
+              <div style="flex-basis:100%; font-size:12px; color:#9ca3af; margin-top:2px;">※ 在庫数はロット合計が自動反映され、直接編集はできません。</div>
             </div>
           </div>
         </div>
@@ -319,13 +339,19 @@ tbody tr:hover td { background: #fafafa; }
               <div class="input-hint" id="day-hint">未設定の場合、残日数による引き当て制限はありません。</div>
             </div>
           </div>
+
+          <!-- SKU有り時のガイド（ロットはSKUごとに管理） -->
+          <div id="lot-sku-guide" style="display:none; margin-top:4px;" class="info-box green">
+            <span class="icon">📦</span>
+            <span>ロットは<strong>バリエーション（SKU）ごと</strong>に管理します。下の「バリエーション設定」の各カードにある<strong>「ロットを管理する」</strong>から登録してください。↓</span>
+          </div>
         </div>
 
       </div>
     </div>
 
     <!-- ★ MODIFIED: バリエーション設定（実際の画面に合わせたカード型） -->
-    <div class="card is-modified">
+    <div class="card is-modified" id="variation-card">
       <div class="card-header">
         <h2>バリエーション設定 <span class="help">?</span> <a href="#" style="font-size: 13px; color: #5b5fc7; font-weight: normal; margin-left: 8px; text-decoration: none;">項目を編集する</a> <span class="card-tag modified">⚠ 既存修正</span></h2>
       </div>
@@ -2031,52 +2057,75 @@ function syncMinDays() {
   }
 }
 
-function toggleLot(el) {
-  const fields = document.getElementById('lot-fields');
-  const label = document.getElementById('lot-label');
-  const warning = document.getElementById('lot-warning-banner');
-  const totalLabel = document.getElementById('total-stock-label');
-  const lotRows = document.querySelectorAll('.var-lot-row');
-  const editIcons = document.querySelectorAll('.edit-icon');
+// 商品タイプ（'sku' = バリエーションあり ／ 'single' = SKU無し単一商品）
+let productType = 'sku';
 
-  if (el.checked) {
-    fields.classList.remove('dimmed');
-    label.textContent = '有効（ロット管理中）';
+function setProductType(type) {
+  productType = type;
+  document.getElementById('pt-sku').classList.toggle('pt-active', type === 'sku');
+  document.getElementById('pt-single').classList.toggle('pt-active', type === 'single');
+  updateLotUI();
+}
+
+function toggleLot(el) {
+  updateLotUI();
+}
+
+// ロット管理の状態と商品タイプから、ボタンの出し分け（排他制御）をまとめて反映
+function updateLotUI() {
+  const lotOn  = document.getElementById('lot-toggle').checked;
+  const single = productType === 'single';
+
+  // ロット管理セクションのフィールド活性
+  const fields = document.getElementById('lot-fields');
+  const label  = document.getElementById('lot-label');
+  fields.classList.toggle('dimmed', !lotOn);
+  label.textContent = lotOn ? '有効（ロット管理中）' : '有効にする';
+
+  // バリエーション設定カードはSKU無し商品では非表示
+  document.getElementById('variation-card').style.display = single ? 'none' : '';
+
+  // 【案A】SKU無し＋ON → 在庫数欄に「ロット管理中＋管理ボタン」を集約
+  const stockNormal = document.getElementById('stock-normal');
+  const stockLot    = document.getElementById('stock-lot-managed');
+  if (single && lotOn) {
+    stockNormal.style.display = 'none';
+    stockLot.style.display = 'flex';
+  } else {
+    stockNormal.style.display = '';
+    stockLot.style.display = 'none';
+  }
+
+  // 【SKU有り】商品レベルにボタンは出さず、ガイド文でSKUカードへ誘導
+  document.getElementById('lot-sku-guide').style.display = (!single && lotOn) ? 'flex' : 'none';
+
+  // SKU有り＋ON時：各バリエーションカードをロットモードに切替
+  const warning    = document.getElementById('lot-warning-banner');
+  const totalLabel = document.getElementById('total-stock-label');
+  if (!single && lotOn) {
     warning.style.display = 'flex';
-    // バリエーションカードをロットモードに切替
     document.querySelectorAll('.var-card').forEach(card => {
-      const stock = parseInt(card.dataset.stock) || 0;
-      const lots = parseInt(card.dataset.lots) || 0;
-      // 在庫数表示を切替
-      const stockVal = card.querySelector('.stock-val');
-      if (stockVal) stockVal.style.display = 'none';
-      const editIcon = card.querySelector('.edit-icon');
-      if (editIcon) editIcon.style.display = 'none';
-      // ロット行表示
-      const lotRow = card.querySelector('.var-lot-row');
-      if (lotRow) lotRow.style.display = 'flex';
+      const sv = card.querySelector('.stock-val'); if (sv) sv.style.display = 'none';
+      const ei = card.querySelector('.edit-icon'); if (ei) ei.style.display = 'none';
+      const lr = card.querySelector('.var-lot-row'); if (lr) lr.style.display = 'flex';
     });
-    // 合計在庫数更新
     const total = Array.from(document.querySelectorAll('.var-card'))
       .reduce((s, c) => s + (parseInt(c.dataset.stock) || 0), 0);
     totalLabel.textContent = total + '個（ロット合計）';
     totalLabel.style.color = '#16a34a';
   } else {
-    fields.classList.add('dimmed');
-    label.textContent = '有効にする';
     warning.style.display = 'none';
     document.querySelectorAll('.var-card').forEach(card => {
-      const stockVal = card.querySelector('.stock-val');
-      if (stockVal) stockVal.style.display = '';
-      const editIcon = card.querySelector('.edit-icon');
-      if (editIcon) editIcon.style.display = '';
-      const lotRow = card.querySelector('.var-lot-row');
-      if (lotRow) lotRow.style.display = 'none';
+      const sv = card.querySelector('.stock-val'); if (sv) sv.style.display = '';
+      const ei = card.querySelector('.edit-icon'); if (ei) ei.style.display = '';
+      const lr = card.querySelector('.var-lot-row'); if (lr) lr.style.display = 'none';
     });
     totalLabel.textContent = '無制限';
     totalLabel.style.color = '#374151';
   }
 }
+
+window.addEventListener('DOMContentLoaded', () => setProductType('sku'));
 
 function updateDayHint(el) {
   const hint = document.getElementById('day-hint');
