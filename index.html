@@ -96,8 +96,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Yu Gothic UI", "Hiragino
 .btn-danger:hover { background: #fef2f2; }
 .btn-outlet { background: white; color: #d97706; border: 1px solid #d97706; }
 .btn-outlet:hover { background: #fffbeb; }
-.pt-btn { background: transparent; color: rgba(255,255,255,0.75); border: none; padding: 6px 16px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.15s; }
-.pt-btn.pt-active { background: #fff; color: #1e1b4b; font-weight: 700; }
+.seg-control { display: inline-flex; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #fff; }
+.seg { background: #fff; color: #6b7280; border: none; padding: 8px 18px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.15s; }
+.seg + .seg { border-left: 1px solid #d1d5db; }
+.seg.active { background: #5b5fc7; color: #fff; font-weight: 600; }
+.seg:not(.active):hover { background: #f5f3ff; color: #5b5fc7; }
 .btn-sm { padding: 5px 12px; font-size: 12px; }
 .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
 .btn-group { display: flex; gap: 8px; }
@@ -251,17 +254,6 @@ tbody tr:hover td { background: #fafafa; }
 
   <div class="container">
 
-    <!-- 🔧 デモ専用：商品タイプ切替（実画面には表示されない） -->
-    <div style="background:#1e1b4b; color:#fff; border-radius:8px; padding:11px 16px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:13px;">
-      <span style="font-weight:700;">🔧 デモ切替</span>
-      <span style="opacity:.8;">商品タイプ：</span>
-      <div style="display:flex; border:1px solid rgba(255,255,255,.3); border-radius:6px; overflow:hidden;">
-        <button id="pt-sku" class="pt-btn pt-active" onclick="setProductType('sku')">SKU有り商品</button>
-        <button id="pt-single" class="pt-btn" onclick="setProductType('single')">SKU無し商品</button>
-      </div>
-      <span style="opacity:.55; font-size:12px;">※ 説明用の切替。実際の登録画面には表示されません。上の「ロット管理」を有効にして挙動を確認してください。</span>
-    </div>
-
     <!-- 数量情報（既存・参考） -->
     <div class="card">
       <div class="card-header">
@@ -325,6 +317,19 @@ tbody tr:hover td { background: #fafafa; }
         </div>
 
         <div id="lot-fields" class="dimmed">
+          <div class="form-row">
+            <div class="form-label">
+              管理単位
+              <span class="help" title="ロットを「商品全体」で管理するか「バリエーション（SKU）ごと」に管理するかを選びます。SKUごとに管理すると、バリエーション単位で賞味期限・在庫を引き当てできます。">?</span>
+            </div>
+            <div class="form-control">
+              <div class="seg-control">
+                <button type="button" id="seg-single" class="seg" onclick="setProductType('single')">商品全体で管理</button>
+                <button type="button" id="seg-sku" class="seg active" onclick="setProductType('sku')">バリエーション（SKU）ごとに管理</button>
+              </div>
+              <div class="input-hint" id="unit-hint">バリエーションごとにロット番号・賞味期限・在庫を管理します。各バリエーションの「ロットを管理する」から登録してください。</div>
+            </div>
+          </div>
           <div class="form-row">
             <div class="form-label">
               出荷可能最低残日数
@@ -2062,8 +2067,11 @@ let productType = 'sku';
 
 function setProductType(type) {
   productType = type;
-  document.getElementById('pt-sku').classList.toggle('pt-active', type === 'sku');
-  document.getElementById('pt-single').classList.toggle('pt-active', type === 'single');
+  document.getElementById('seg-sku').classList.toggle('active', type === 'sku');
+  document.getElementById('seg-single').classList.toggle('active', type === 'single');
+  document.getElementById('unit-hint').textContent = (type === 'single')
+    ? 'この商品にロット番号・賞味期限・在庫を登録します。'
+    : 'バリエーションごとにロット番号・賞味期限・在庫を管理します。各バリエーションの「ロットを管理する」から登録してください。';
   updateLotUI();
 }
 
