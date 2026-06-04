@@ -94,8 +94,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Yu Gothic UI", "Hiragino
 .btn-ghost:hover { background: #f9fafb; }
 .btn-danger { background: white; color: #dc2626; border: 1px solid #dc2626; }
 .btn-danger:hover { background: #fef2f2; }
-.btn-outlet { background: white; color: #d97706; border: 1px solid #d97706; }
-.btn-outlet:hover { background: #fffbeb; }
 .seg-control { display: inline-flex; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #fff; }
 .seg { background: #fff; color: #6b7280; border: none; padding: 8px 18px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.15s; }
 .seg + .seg { border-left: 1px solid #d1d5db; }
@@ -721,7 +719,7 @@ tbody tr:hover td { background: #fafafa; }
               <td>
                 <span class="chip chip-red">⛔ 除外（残日数不足）</span>
               </td>
-              <td class="btn-group"><button class="btn btn-ghost btn-sm" onclick="editLot('LOT-2026-003','2026-06-06','2026-05-01','2026-05-10',50)">編集</button><button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button><button class="btn btn-outlet btn-sm" onclick="markOutlet(this)" style="white-space:nowrap;">アウトレット商品にする</button></td>
+              <td class="btn-group"><button class="btn btn-ghost btn-sm" onclick="editLot('LOT-2026-003','2026-06-06','2026-05-01','2026-05-10',50)">編集</button><button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button></td>
             </tr>
             <tr data-days="0" class="next-alloc">
               <td>
@@ -2033,12 +2031,10 @@ function syncMinDays() {
     const daysSpan = row.querySelector('td:nth-child(3) span');
     const eligible = (v === 0) || (days >= v);
 
-    const outletBtn = row.querySelector('.btn-outlet');
     if (eligible) {
       chip.className = 'chip chip-green';
       chip.textContent = '✓ 引き当て可能';
       daysSpan.className = 'days-ok';
-      if (outletBtn) outletBtn.style.display = 'none';
       if (days < minEligibleDays) {
         minEligibleDays = days;
         nextAllocRow = row;
@@ -2047,7 +2043,6 @@ function syncMinDays() {
       chip.className = 'chip chip-red';
       chip.textContent = '⛔ 除外（残日数不足）';
       daysSpan.className = 'days-ng';
-      if (outletBtn) outletBtn.style.display = '';
     }
 
     // 次回引き当て対象ラベルと行ハイライトをリセット
@@ -2185,7 +2180,6 @@ function makeLotRow(no, expiry, mfg, arrival, stock, days, threshold) {
     <td class="btn-group">
       <button class="btn btn-ghost btn-sm" onclick="editLot('${no}','${expiry}','${mfg}','${arrival}',${stock})">編集</button>
       <button class="btn btn-danger btn-sm" onclick="deleteLot(this)">削除</button>
-      <button class="btn btn-outlet btn-sm" onclick="markOutlet(this)" style="white-space:nowrap;${eligible ? 'display:none;' : ''}">アウトレット商品にする</button>
     </td>`;
   return tr;
 }
@@ -2228,16 +2222,6 @@ function saveLot() {
 function deleteLot(btn) {
   btn.closest('tr').remove();
   syncMinDays();
-}
-
-function markOutlet(btn) {
-  const row = btn.closest('tr');
-  const chip = row.querySelector('.chip');
-  chip.className = 'chip';
-  chip.style.cssText = 'background:#fed7aa; color:#9a3412;';
-  chip.textContent = '🏷 アウトレット対応済';
-  btn.disabled = true;
-  btn.textContent = '対応済';
 }
 
 function editLot(no, expiry, mfg, arrival, stock) {
