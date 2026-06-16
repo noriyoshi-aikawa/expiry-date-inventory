@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>在庫管理 - 賞味期限アラート追加モック</title>
+<style>
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    font-size: 13px;
+    color: #333;
+    background: #fff;
+    padding: 20px 30px;
+  }
+  h1 { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+
+  .section-title {
+    font-weight: bold;
+    margin: 24px 0 8px;
+  }
+  .section-title::before {
+    content: "■ ";
+    color: #c84b00;
+  }
+
+  table.setting-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 860px;
+    margin-bottom: 4px;
+  }
+  table.setting-table td, table.setting-table th {
+    border: 1px solid #ccc;
+    padding: 7px 10px;
+    vertical-align: middle;
+  }
+  table.setting-table th {
+    background: #f5f5f5;
+    text-align: left;
+    width: 240px;
+  }
+  input[type="text"], input[type="number"] {
+    border: 1px solid #aaa;
+    padding: 3px 5px;
+    font-size: 13px;
+  }
+  input[type="number"] { width: 50px; }
+  input[type="text"] { width: 200px; }
+  input[type="radio"] { margin-right: 4px; }
+
+  button.register-btn {
+    background: #eee;
+    border: 1px solid #aaa;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .note {
+    color: #666;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  /* 既存セクション（参照用） */
+  .existing {
+    opacity: 0.45;
+  }
+
+  /* 新規追加セクション */
+  .new-section {
+    border: 2px dashed #c84b00;
+    padding: 12px 16px;
+    margin-top: 8px;
+    background: #fffaf7;
+  }
+  .new-badge {
+    display: inline-block;
+    background: #c84b00;
+    color: #fff;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<h1>在庫管理</h1>
+
+<!-- 既存：在庫ビジュアル設定（参照用・薄表示） -->
+<div class="existing">
+  <p class="section-title">在庫ビジュアル（○△×）表示機能の設定</p>
+  <table class="setting-table">
+    <tr>
+      <td>
+        <input type="radio" name="visual" checked> 数字で表示
+        <input type="radio" name="visual"> 「○△×」で表示
+        △ 残りわずかを表示する数量：<input type="number" value=""> 個
+      </td>
+      <td style="width:100px; text-align:center;">
+        <button class="register-btn">登録する</button>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ↓ 新規追加セクション -->
+<div class="new-section">
+  <p class="section-title" style="margin-top:0;">
+    賞味期限アラートの設定
+    <span class="new-badge">NEW</span>
+  </p>
+  <p>賞味期限まで設定した残日数以下になった商品が存在する場合、アラームメールが送信されます。</p>
+
+  <table class="setting-table">
+    <tr>
+      <th rowspan="5">アラームメール送信先</th>
+      <td>送信先メールアドレス1：</td>
+      <td><input type="text" placeholder="example@shop.jp"></td>
+      <td rowspan="5" style="width:110px; text-align:center;">
+        <button class="register-btn">登録する</button>
+      </td>
+    </tr>
+    <tr>
+      <td>送信先メールアドレス2：</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <td>送信先メールアドレス3：</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <td>送信先メールアドレス4：</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <td>送信先メールアドレス5：</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <th>アラート発動条件</th>
+      <td colspan="2">
+        賞味期限まで <input type="number" value="30"> 日以下の在庫が存在する場合に通知する
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>通知頻度</th>
+      <td colspan="2">
+        <input type="radio" name="freq" checked> 毎日送信
+        <input type="radio" name="freq"> 週1回（月曜）
+        <input type="radio" name="freq"> 条件に該当した初回のみ
+      </td>
+      <td></td>
+    </tr>
+  </table>
+  <p class="note">※ 賞味期限はロット単位で管理されます。1ロットでも条件を満たした場合に通知されます。</p>
+</div>
+
+</body>
+</html>

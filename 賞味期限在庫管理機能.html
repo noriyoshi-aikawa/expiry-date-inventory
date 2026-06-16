@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>賞味期限・ロット在庫管理機能 企画書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-primary:       #2389CA;
+    --color-secondary:     #1568A6;
+    --color-tertiary:      #084D84;
+    --color-white:         #FFFFFF;
+    --color-black:         #1A1A1C;
+    --color-warning:       #F05A25;
+    --color-attention:     #FEFFB8;
+    --color-btn-free:      #F05A25;
+    --color-btn-usually:   #1A1A1C;
+    --color-text-primary:  #1A1A1C;
+    --color-text-secondary:#C1C0C6;
+    --color-text-link:     #2389CA;
+    --color-border:        #D5D5D9;
+    --color-table-alt:     #F5F5F5;
+    --color-heading-bg:    #E9F3FA;
+    --color-blue-10:       #E9F3FA;
+    --color-blue-5:        #F4F9FC;
+    --color-grey-5:        #F4F4F4;
+    --font-ja: 'Noto Sans JP', 'メイリオ', sans-serif;
+    --font-en: 'Outfit', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-ja);
+    background: #EFEFEF;
+    color: var(--color-text-primary);
+    line-height: 1.75;
+    letter-spacing: 0.04em;
+  }
+  .slide {
+    width: 960px;
+    min-height: 540px;
+    margin: 40px auto;
+    background: var(--color-white);
+    padding: 56px 64px;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+  /* 表紙 */
+  .slide.cover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 540px;
+  }
+  .cover .eyebrow {
+    font-family: var(--font-en);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 20px;
+  }
+  .cover h1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+  .cover .subtitle {
+    font-size: 18px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+  .cover .date {
+    font-family: var(--font-en);
+    font-size: 15px;
+    opacity: 0.7;
+    margin-top: 32px;
+  }
+  .cover .badge {
+    display: inline-block;
+    margin-top: 24px;
+    background: var(--color-warning);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+  }
+  /* まとめ */
+  .slide.summary {
+    background: var(--color-tertiary);
+    color: var(--color-white);
+  }
+  .summary h2 { color: var(--color-white); }
+  /* 見出し */
+  .slide h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.5;
+    margin-bottom: 28px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--color-primary);
+  }
+  .slide h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-black);
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .slide h3:first-of-type { margin-top: 0; }
+  /* 箇条書き */
+  ul.bullets { padding-left: 0; list-style: none; }
+  ul.bullets li {
+    font-size: 17px;
+    line-height: 1.75;
+    padding: 10px 0 10px 28px;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+  }
+  ul.bullets li:last-child { border-bottom: none; }
+  ul.bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+  ul.bullets li strong { color: var(--color-primary); }
+  /* カードグリッド */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .card {
+    background: var(--color-blue-10);
+    padding: 24px;
+    border-top: 4px solid var(--color-primary);
+  }
+  .card h3 {
+    color: var(--color-primary);
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  .card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+  }
+  .card .purpose {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-warning);
+    font-weight: 500;
+    font-size: 15px;
+  }
+  /* 2カラム */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  .col-item {
+    background: var(--color-blue-5);
+    padding: 14px 18px;
+    border-left: 4px solid var(--color-primary);
+    margin-bottom: 12px;
+  }
+  .col-item .label {
+    display: block;
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .col-item .value {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--color-text-primary);
+  }
+  /* スコアテーブル */
+  table.score {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  table.score th {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+  }
+  table.score td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+  table.score tr:nth-child(even) td { background: var(--color-table-alt); }
+  table.score tr.total td {
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 700;
+  }
+  /* ページ番号 */
+  .page-num {
+    position: absolute;
+    bottom: 28px;
+    right: 40px;
+    font-family: var(--font-en);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+  .cover .page-num, .summary .page-num {
+    color: var(--color-white);
+    opacity: 0.6;
+  }
+  /* まとめスライド用 */
+  .summary-block {
+    margin-bottom: 28px;
+  }
+  .summary-block .head {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-attention);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .summary-block p, .summary-block li {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .summary-block ul { padding-left: 20px; }
+  .summary-block li { margin-bottom: 6px; }
+  /* ロードマップ */
+  .roadmap {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .roadmap-col {
+    border-top: 4px solid var(--color-primary);
+    padding: 16px;
+    background: var(--color-blue-5);
+  }
+  .roadmap-col.phase2 { border-color: var(--color-secondary); }
+  .roadmap-col.phase3 { border-color: var(--color-tertiary); }
+  .roadmap-col .phase-label {
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+    margin-bottom: 6px;
+  }
+  .roadmap-col.phase2 .phase-label { color: var(--color-secondary); }
+  .roadmap-col.phase3 .phase-label { color: var(--color-tertiary); }
+  .roadmap-col .phase-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--color-black);
+  }
+  .roadmap-col ul {
+    padding-left: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+  }
+  /* 印刷 */
+  @media print {
+    body { background: var(--color-white); }
+    .slide {
+      min-height: 100vh;
+      page-break-after: always;
+      box-shadow: none;
+      margin: 0;
+      width: 100%;
+    }
+    .slide:last-child { page-break-after: auto; }
+  }
+  /* スマホ */
+  @media (max-width: 768px) {
+    .slide { width: 100%; padding: 40px 24px; }
+    .slide h2 { font-size: 22px; }
+    .card-grid, .two-col, .roadmap { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Slide 1: 表紙 ============ -->
+<section class="slide cover">
+  <p class="eyebrow">Product Proposal · 食品EC強化</p>
+  <h1>賞味期限・ロット<br>在庫管理機能</h1>
+  <p class="subtitle">食品BtoB業務パック 中核機能</p>
+  <span class="badge">優先度スコア 21 / 30点　→　優先度：高</span>
+  <p class="date">2026年5月　AIプロダクトチーム</p>
+  <span class="page-num">01</span>
+</section>
+
+<!-- ============ Slide 2: 背景と課題 ============ -->
+<section class="slide">
+  <h2>背景と課題</h2>
+  <ul class="bullets">
+    <li><strong>現在の在庫管理は「数量」のみ：</strong>makeshopの在庫管理は数量だけで管理されており、食品ECに不可欠な「時間軸（賞味期限・ロット）」の概念が存在しない</li>
+    <li><strong>現場は目視・記憶・手作業：</strong>生クリーム（賞味期限20日）を扱う食品ECでは「出荷最低残8日」ルールをEC上で強制できず、出荷前日に倉庫担当が実在庫を目視でロット当て直している。担当者が変われば即崩壊する</li>
+    <li><strong>食品EC市場は4兆円規模で成長中：</strong>BtoB・製造直販・D2C食品事業者はShopifyの食品商習慣非対応に課題を感じており、国産カートへの回帰ニーズが存在する。差別化の核心になる</li>
+    <li><strong>「食品BtoB業務パック」の中核機能：</strong>ヒアリング5社中3社が賞味期限管理を最優先・高優先と評価</li>
+  </ul>
+  <span class="page-num">02</span>
+</section>
+
+<!-- ============ Slide 3: 解決する問題 ============ -->
+<section class="slide">
+  <h2>解決する問題</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h3>対象ユーザー</h3>
+      <p>食品EC運用担当者・EC事業責任者（中小企業の食品ECショップ）。月商50万〜300万円。BtoB卸取引を併用する製造直販・D2C事業者</p>
+      <p class="purpose">▶ 中小企業の食品ECショップ様が想定主要顧客</p>
+    </div>
+    <div class="card">
+      <h3>課題</h3>
+      <p>賞味期限管理が「在庫数」だけでは制御できず、出荷可否判断が担当者の目視・記憶に完全依存している</p>
+      <p class="purpose">▶ 担当者属人化→退職リスク・引き継ぎ困難</p>
+    </div>
+    <div class="card">
+      <h3>現状の問題</h3>
+      <p>EC上に賞味期限情報がないためFEFO（期限近い順の先入先出）が実現できず、残日数基準以下の商品出荷を防ぐ仕組みがない</p>
+      <p class="purpose">▶ 既存機能では代替不可能な領域</p>
+    </div>
+    <div class="card">
+      <h3>影響</h3>
+      <p>担当者属人化による運用崩壊リスク</p>
+      <p class="purpose">▶ 解消で業務継続性を担保</p>
+    </div>
+  </div>
+  <span class="page-num">03</span>
+</section>
+
+<!-- ============ Slide 4: 機能概要 ============ -->
+<section class="slide">
+  <h2>機能概要（MVP スコープ）</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr; gap:16px; height:calc(100% - 80px);">
+
+    <div class="col-item" style="margin:0;">
+      <span class="label">機能① ロット登録</span>
+      <span class="value">商品バリエーション単位に賞味期限・製造日・入荷日・ロット在庫数を登録。手動入力と商品情報一括アップロードCSVの両対応（CSVはMVPに含む）</span>
+      <span class="value" style="display:block; margin-top:6px; padding-top:6px; border-top:1px solid var(--color-border); font-size:11px; color:var(--color-pattern-60);">※「ロット」とは同じ条件で製造・入荷された商品のひとまとまりのこと。同じ商品でも製造日が異なれば賞味期限が異なるため、ロット単位で在庫を管理することで「期限が近いものから出荷する（FEFO）」制御が初めて可能になる。</span>
+    </div>
+
+    <div class="col-item" style="margin:0;">
+      <span class="label">機能② FEFO自動引当</span>
+      <span class="value">注文受付時に賞味期限が近い順のロットから自動引当。複数ロットにまたがる場合もトランザクション管理で整合性を担保</span>
+      <span class="value" style="display:block; margin-top:6px; padding-top:6px; border-top:1px solid var(--color-border); font-size:11px; color:var(--color-pattern-60);">※「FEFO（First Expired, First Out）」とは「期限が近いものから先に出荷する」方式のこと。賞味期限が古いロットを優先して出荷することで、期限切れ廃棄を最小化する。一般的な倉庫管理のFIFO（先入れ先出し）の食品特化版にあたる。</span>
+    </div>
+
+    <div class="col-item" style="margin:0;">
+      <span class="label">機能③ 残日数バリデーション</span>
+      <span class="value">商品ごとに出荷可能な最低残日数（例：残8日以上）を設定。基準を下回るロットを引当対象から自動除外し、基準外商品の出荷を防止</span>
+    </div>
+
+    <div class="col-item" style="margin:0;">
+      <span class="label">機能④ アラートメール</span>
+      <span class="value">設定した残日数閾値を下回ったロットが発生した場合に管理者へ自動送信（日次バッチ）。既存在庫アラート機能を流用・拡張</span>
+    </div>
+
+    <div class="col-item" style="margin:0;">
+      <span class="label">機能⑤ 期限切迫品の別商品登録</span>
+      <span class="value">アラート対象となった期限切迫ロットを、管理者が任意のタイミングで別商品（例：訳あり品・アウトレット品）として新規登録できる機能。在庫を手動で切り替え、割引価格での販売機会を確保する</span>
+    </div>
+
+    <div class="col-item" style="margin:0; background:var(--color-heading-bg); border-left:4px solid var(--color-primary);">
+      <span class="label" style="color:var(--color-primary);">MVPスコープの考え方</span>
+      <span class="value" style="font-size:12px;">機能①〜⑤はすべてMVPに含む。自動切替は行わず、管理者が能動的に操作する設計とすることでブランドリスクを回避しつつ廃棄ロス削減の機会を提供する</span>
+    </div>
+
+  </div>
+  <span class="page-num">04</span>
+</section>
+
+<!-- ============ Slide 5: 提供価値 ============ -->
+<section class="slide">
+  <h2>提供価値</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:20px; height:calc(100% - 80px);">
+    <div class="card" style="margin:0;">
+      <h3>UX・業務効率</h3>
+      <p>出荷前の目視ロット確認作業をゼロへ。倉庫担当者の「出荷前日のロット手動当て直し」業務を半自動化。商品情報一括アップロードCSVで入荷時の登録負荷を最小化</p>
+    </div>
+    <div class="card" style="margin:0;">
+      <h3>競争優位性</h3>
+      <p>Shopifyにはネイティブなロット・FEFO管理機能がなく、日本の食品商習慣（残日数N日以上ルール）に特化した国産カートとしての差別化が明確になる</p>
+    </div>
+    <div class="card" style="margin:0;">
+      <h3>リスク低減</h3>
+      <p>出荷最低残日数の強制バリデーションで担当者属人化運用を排除し、業務継続性を担保。</p>
+    </div>
+    <div class="card" style="margin:0;">
+      <h3>売上向上</h3>
+      <p>期限切迫品を別商品（訳あり品・アウトレット品）として手動登録し割引販売することで、廃棄予定在庫を売上に転換。管理者が主体的に操作する設計でブランドリスクを回避</p>
+    </div>
+    <div class="card" style="margin:0; background:var(--color-primary); color:var(--color-white);">
+      <h3 style="color:var(--color-white);">この機能が解決すること</h3>
+      <ul style="margin:0; padding-left:1.2em; line-height:2;">
+        <li>手作業・記憶頼りの在庫管理から脱却</li>
+        <li>担当者が変わっても業務が止まらない</li>
+        <li>Shopifyでは実現できない国産食品ECの商習慣対応</li>
+        <li>期限切迫在庫の廃棄ロスを売上に転換</li>
+      </ul>
+    </div>
+  </div>
+  <span class="page-num">05</span>
+</section>
+
+<!-- ============ Slide 6: KPI・成功指標 ============ -->
+<section class="slide">
+  <h2>KPI・成功指標</h2>
+
+  <style>
+    table.kpi {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    table.kpi th {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+    }
+    table.kpi td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+      line-height: 1.65;
+    }
+    table.kpi tr:nth-child(even) td { background: var(--color-table-alt); }
+    table.kpi .kpi-label {
+      font-weight: 700;
+      color: var(--color-primary);
+      white-space: nowrap;
+    }
+    table.kpi .kpi-target {
+      font-weight: 700;
+      color: var(--color-warning);
+    }
+    .kpi-note {
+      font-size: 12px;
+      color: var(--color-pattern-60);
+      margin-top: 4px;
+    }
+  </style>
+
+  <table class="kpi">
+    <thead>
+      <tr>
+        <th style="width:5%">#</th>
+        <th style="width:20%">KPI</th>
+        <th style="width:22%">目標値</th>
+        <th style="width:22%">現状ベースライン</th>
+        <th>補足・計測方法</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="kpi-label">①</td>
+        <td><strong>新規ショップ<br>による利用数</strong><br><span class="kpi-note">（MVPリリース後6ヶ月累計）</span></td>
+        <td>
+          <span class="kpi-target">累計7店以上</span>
+          <div class="kpi-note">MVPリリース後6ヶ月</div>
+        </td>
+        <td>
+          月商300万円以下の食品系新規加盟：月平均24店/月<br>
+          <span class="kpi-note">（11月特需除く実態平均）</span>
+        </td>
+        <td>
+          <div class="kpi-note">
+            【計算式】<br>
+            月24店 × 10% = 月約2.4店（食品EC・賞味期限管理ニーズあり層・仮定）<br>
+            月2.4店 × 50% = 月約1.2店（CS・営業伴走で導入する割合・仮定）<br>
+            月1.2店 × 6ヶ月 = <strong>累計約7店</strong>（目標値）<br>
+            ※10%・50%はともに定性仮説ベース
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="kpi-label">②</td>
+        <td><strong>既存ショップ<br>による利用数</strong><br><span class="kpi-note">（MVPリリース後6ヶ月時点）</span></td>
+        <td>
+          <span class="kpi-target">約10店以上</span>
+          <div class="kpi-note">MVPリリース後6ヶ月</div>
+        </td>
+        <td>
+          月商300万円以下の食品系既存ショップ：約2,000店<br>
+          <span class="kpi-note">（月商1,000万円超は他ツール併用のためスコープ外）</span>
+        </td>
+        <td>
+          <div class="kpi-note">
+            【計算式】<br>
+            2,000店 × 5% = 約100店（賞味期限管理が必須ニーズの層・仮定）<br>
+            100店 × 10% = <strong>約10店</strong>（CS伴走・営業により6ヶ月以内に利用開始・仮定）<br>
+            全加盟店換算：約0.1%（kpi.md整合用）。月次モニタリング<br>
+            ※5%・10%はともに定性仮説ベース
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="kpi-label">③</td>
+        <td><strong>食品系ショップ<br>退店数・解約率改善</strong></td>
+        <td>
+          <span class="kpi-target">月次退店：26店舗/月以下<br>月次解約率：1.02%/月以下</span>
+          <div class="kpi-note">MVPリリース後12ヶ月</div>
+        </td>
+        <td>
+          月次退店：29.2店舗/月<br>
+          月次解約率：1.15%/月<br>
+          <span class="kpi-note">（直近3ヶ月平均・季節除外）</span>
+        </td>
+        <td>
+          退店要因のうち「運用属人化限界・他社移行」（推定10%）に直接対処<br>
+          <span class="kpi-note">KPI①②と両輪で食品系ショップ数の純増転換を目指す</span>
+          <div class="kpi-note" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--color-border);">
+            【計算式】<br>
+            現状実態平均 29.2店/月 × 本機能が影響できる退店割合（仮定10%）≒ 抑制効果 2.92店/月<br>
+            → 29.2 − 2.92 ≒ <strong>26店/月</strong>（目標退店数）<br>
+            解約率 1.02% = 目標退店数26店 ÷ 母数2,537店（食品系ショップ全体） × 100 の派生値<br>
+            ※現状ベースライン（1.15%）も同母数2,537店で計算<br>
+            ※10%は「運用属人化・他社移行が退店理由」という定性仮説から設定
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <span class="page-num">06</span>
+</section>
+
+<!-- ============ Slide 7: リスクと対策 ============ -->
+<section class="slide">
+  <h2>リスクと対策</h2>
+  <div class="two-col">
+    <div>
+      <h3>想定リスク</h3>
+      <div class="col-item">
+        <span class="label">技術リスク</span>
+        <span class="value">DBスキーマへのロットテーブル追加により全加盟店の在庫データへのマイグレーションが必要。同時注文時のRace Condition対策が必要。温度帯担当との統合コスト増大リスク</span>
+      </div>
+      <div class="col-item">
+        <span class="label">運用リスク</span>
+        <span class="value">基幹連携がないMVP段階では手動入力が必要で継続利用率が低下するリスク。→ 商品情報一括アップロードCSVをMVPに含めることで緩和</span>
+      </div>
+      <div class="col-item">
+        <span class="label">ビジネスリスク</span>
+        <span class="value">食品安全に関する法的責任問題：「makeshopで設定した賞味期限に基づき出荷した商品が問題を起こした場合」の責任所在を利用規約に明記が必要</span>
+      </div>
+    </div>
+    <div>
+      <h3>開発観点</h3>
+      <div class="col-item">
+        <span class="label">難易度</span>
+        <span class="value">中〜高。DBスキーマ変更と既存在庫との整合性担保が最大の技術難度。FEFO引当のトランザクション設計が必要</span>
+      </div>
+      <div class="col-item">
+        <span class="label">工数</span>
+        <span class="value">MVP：BE×2・FE×1・QA×1、3〜4ヶ月</span>
+      </div>
+      <div class="col-item">
+        <span class="label">依存関係</span>
+        <span class="value">受注処理の改修が必要。決済画面の改修とぶつかる。決済STEP4の改修完了後（11月終了予定）の実装着手。<br>温度帯担当との合同DBスキーマ設計（着手前必須）。残日数計算基準の業務定義確定</span>
+      </div>
+    </div>
+  </div>
+  <span class="page-num">07</span>
+</section>
+
+<!-- ============ Slide 8: 優先度スコア ============ -->
+<section class="slide">
+  <h2>優先度スコア</h2>
+  <table class="score">
+    <thead>
+      <tr>
+        <th>評価軸</th>
+        <th>重み</th>
+        <th>評価（1〜5）</th>
+        <th>加重スコア</th>
+        <th>コメント</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>売上インパクト</td>
+        <td>×2</td>
+        <td>3</td>
+        <td>6</td>
+        <td>MVPスコープでの直接的なGMV向上効果は限定的。期限切れ出荷クレーム削減・業務継続性の担保が主効果</td>
+      </tr>
+      <tr>
+        <td>ユーザー価値</td>
+        <td>×1</td>
+        <td>5</td>
+        <td>5</td>
+        <td>食品EC事業者の現状最大ペイン。既存機能では代替不可能</td>
+      </tr>
+      <tr>
+        <td>開発コスト</td>
+        <td>×1</td>
+        <td>2</td>
+        <td>2</td>
+        <td>DBスキーマ変更・引当ロジック・マイグレーションが必要で中〜高難度</td>
+      </tr>
+      <tr>
+        <td>戦略整合性</td>
+        <td>×1</td>
+        <td>5</td>
+        <td>5</td>
+        <td>「食品BtoB業務パック」中核機能。ヒアリングレポート重点テーマ2と直結</td>
+      </tr>
+      <tr>
+        <td>利用範囲</td>
+        <td>×1</td>
+        <td>3</td>
+        <td>3</td>
+        <td>食品EC特化だが市場は4兆円規模。戦略的セグメント集中として正当化される</td>
+      </tr>
+      <tr class="total">
+        <td>合計</td>
+        <td>—</td>
+        <td>—</td>
+        <td>21 / 30点</td>
+        <td>優先度：高（15点以上でロードマップ登録推奨）</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="page-num">08</span>
+</section>
+
+<!-- ============ Slide 9: まとめ・推奨判断 ============ -->
+<section class="slide summary">
+  <h2>まとめ・推奨判断</h2>
+  <div class="summary-block">
+    <p class="head">▶ 推奨判断：Go — 開発推進</p>
+    <p>食品EC事業者の現場最大ペインを解消する代替不可能な機能。優先度スコア21点で「優先度：高」。食品BtoB業務パックの中核として開発を推進する。</p>
+  </div>
+  <div class="summary-block">
+    <p class="head">▶ MVPスコープ（3〜4ヶ月）</p>
+    <div class="roadmap" style="grid-template-columns: 1fr;">
+      <div class="roadmap-col">
+        <p class="phase-label">MVP · 3〜4ヶ月</p>
+        <p class="phase-title">ロット管理・FEFO引当</p>
+        <ul>
+          <li>ロット登録（手動＋CSV）</li>
+          <li>FEFO自動引当</li>
+          <li>残日数バリデーション</li>
+          <li>アラートメール</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="summary-block">
+    <p class="head">▶ 着手前の必須アクション</p>
+    <ul>
+      <li>① 温度帯担当との合同DBスキーマ設計会議を今すぐ設定</li>
+      <li>② 加盟店へ「残日数計算基準」と「CSVフォーマット」の追加ヒアリングを今すぐ実施</li>
+      <li>③ 〜2週間：MVP機能要件定義書を作成しTech Leadと技術レビュー</li>
+    </ul>
+  </div>
+  <span class="page-num">09</span>
+</section>
+
+</body>
+</html>
