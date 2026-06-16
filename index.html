@@ -2176,7 +2176,7 @@ function toggleSingleLot(el) {
   const hint  = document.getElementById('single-lot-hint');
   label.textContent = on ? 'ON（単一ロットから一括引き当て）' : 'OFF（通常のFEFO分割引き当て）';
   if (on) {
-    hint.textContent = 'ON時：注文数を1つのロットだけでまかなえる場合、複数ロットへ分割せず、その注文数を満たせる単一ロット（賞味期限が最も近いもの）から一括で引き当てます。';
+    hint.innerHTML = 'ON時：注文数を1つのロットだけでまかなえる場合、複数ロットへ分割せず、その注文数を満たせる単一ロット（賞味期限が最も近いもの）から一括で引き当てます（例：130個注文 → <strong>LOT-2026-002から130個</strong>を一括引き当て）。';
   } else {
     hint.textContent = 'OFF時：注文数が1ロットの在庫を超える場合、賞味期限の近い順に複数ロットへ分割して引き当てます（例：130個注文 → LOT-2026-003から50個＋LOT-2026-001から80個）。';
   }
