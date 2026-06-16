@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/mock/index.html" }
+    { "source": "/", "destination": "/mock/index.html" },
+    { "source": "/spec", "destination": "/賞味期限在庫管理機能.html" }
   ]
 }

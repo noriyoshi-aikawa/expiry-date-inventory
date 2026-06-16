@@ -386,9 +386,10 @@
       <span class="value">アラート対象となった期限切迫ロットを、管理者が任意のタイミングで別商品（例：訳あり品・アウトレット品）として新規登録できる機能。在庫を手動で切り替え、割引価格での販売機会を確保する</span>
     </div>
 
-    <div class="col-item" style="margin:0; background:var(--color-heading-bg); border-left:4px solid var(--color-primary);">
-      <span class="label" style="color:var(--color-primary);">MVPスコープの考え方</span>
-      <span class="value" style="font-size:12px;">機能①〜⑤はすべてMVPに含む。自動切替は行わず、管理者が能動的に操作する設計とすることでブランドリスクを回避しつつ廃棄ロス削減の機会を提供する</span>
+    <div class="col-item" style="margin:0;">
+      <span class="label">機能⑥ 単一ロット優先引き当て</span>
+      <span class="value">大口注文時、注文数を1つのロットでまかなえる場合に複数ロットへ分割せず、注文数を満たせる単一ロット（賞味期限が最も近いもの）から一括引き当て。商品ごとにON/OFFをトグルで切替できる</span>
+      <span class="value" style="display:block; margin-top:6px; padding-top:6px; border-top:1px solid var(--color-border); font-size:11px; color:var(--color-pattern-60);">※ OFF時は従来のFEFOで賞味期限の近い順に複数ロットへ分割引当（例：130個注文→残9日ロットから50個＋次のロットから80個）。ON時は1注文に賞味期限の異なるロットが混在するのを防ぎ、注文数を満たせる単一ロットから一括引当（例：130個注文→在庫150個の単一ロットから130個）。</span>
     </div>
 
   </div>
