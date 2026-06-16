@@ -107,6 +107,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Yu Gothic UI", "Hiragino
 
 /* ========== HELP ICON ========== */
 .help { display: inline-flex; width: 15px; height: 15px; background: #9ca3af; color: white; border-radius: 50%; font-size: 9px; align-items: center; justify-content: center; cursor: help; margin-left: 3px; font-weight: bold; vertical-align: middle; }
+.help-tip { position: fixed; max-width: 300px; background: #1f2937; color: #fff; padding: 8px 11px; border-radius: 6px; font-size: 12px; line-height: 1.6; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 99999; pointer-events: none; white-space: normal; }
 
 /* ========== INFO BOX ========== */
 .info-box { border-radius: 5px; padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; line-height: 1.6; }
@@ -713,7 +714,7 @@ tbody tr:hover td { background: #fafafa; }
           </div>
           <div id="p2-alloc-mode-note" class="info-box green" style="display:none; margin: 0; padding: 6px 12px; font-size: 12px;">
             <span>🎯</span>
-            <span><strong>単一ロット優先引き当て：ON</strong>。注文数を1ロットでまかなえる場合は分割せず、その数を満たせる単一ロット（賞味期限が最も近いもの）から一括引き当てします（例：130個注文 → <strong>LOT-2026-002から130個</strong>）。</span>
+            <span><strong>単一ロット優先引き当て：ON</strong>。注文数を1ロットでまかなえる場合は分割せず、その数を満たせる単一ロット（賞味期限が最も近いもの）から一括引き当てします。</span>
           </div>
         </div>
       </div>
@@ -2344,6 +2345,52 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+
+// バルーンヘルプ：title属性のブラウザ遅延をなくし、カーソルオンで即時表示する
+(function () {
+  const tip = document.createElement('div');
+  tip.className = 'help-tip';
+  tip.style.display = 'none';
+  document.body.appendChild(tip);
+
+  function position(e) {
+    const pad = 12;
+    const r = tip.getBoundingClientRect();
+    let x = e.clientX + 14;
+    let y = e.clientY + 16;
+    if (x + r.width + pad > window.innerWidth) x = window.innerWidth - r.width - pad;
+    if (x < pad) x = pad;
+    if (y + r.height + pad > window.innerHeight) y = e.clientY - r.height - 12;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+  function show(e) {
+    const text = e.currentTarget.dataset.tip;
+    if (!text) return;
+    tip.textContent = text;
+    tip.style.display = 'block';
+    position(e);
+  }
+  function hide() { tip.style.display = 'none'; }
+
+  function initTips() {
+    document.querySelectorAll('.help[title]').forEach(el => {
+      // ネイティブtitleの遅延ツールチップを抑止し、data-tipへ退避
+      el.dataset.tip = el.getAttribute('title');
+      el.removeAttribute('title');
+    });
+    document.querySelectorAll('.help[data-tip]').forEach(el => {
+      el.addEventListener('mouseenter', show);
+      el.addEventListener('mousemove', position);
+      el.addEventListener('mouseleave', hide);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTips);
+  } else {
+    initTips();
+  }
+})();
 </script>
 
 </body>
